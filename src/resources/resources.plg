@@ -1,0 +1,22 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: resources - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating command line "link.exe /nologo /subsystem:windows /incremental:yes /pdb:"Debug/resources.pdb" /debug /machine:I386 /out:"Debug/resources.exe" /pdbtype:sept  .\Debug\resources.res "
+<h3>Output Window</h3>
+Linking...
+LINK : error LNK2001: unresolved external symbol _WinMainCRTStartup
+Debug/resources.exe : fatal error LNK1120: 1 unresolved externals
+Ö´ÐÐ link.exe Ê±³ö´í.
+
+
+
+<h3>Results</h3>
+resources.exe - 1 error(s), 0 warning(s)
+</pre>
+</body>
+</html>
