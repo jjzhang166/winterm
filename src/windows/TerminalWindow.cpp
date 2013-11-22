@@ -15,7 +15,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "window.h"
-#include "../util/log.h"
+#include <util/log.h>
 
 #include "../resources/resource.h"
 #include "TerminalWindow.h"
@@ -24,17 +24,17 @@
 #include "../ldisc.h"
 #include "../ldiscucs.h"
 #include "../getPcMsgApi.h"
-#include "../util/encrypt.h"
+#include <util/encrypt.h>
 #include "../putty.h"
-#include "../cpputils/Util.h"
+#include <cpputils/Util.h>
 #include <iostream>
 #include "../MonitorCom.h"
-#include "../cpputils/ThreadCreator.h"
+#include <cpputils/ThreadCreator.h>
 #include "../ConfigDialog.h"
 #include "../pairs.h"
-#include "../cpputils/Properties.h"
+#include <cpputils/Properties.h>
 #include "../Setting.h"
-#include "../util/comapi.h"
+#include <util/comapi.h>
 
 //#define ZHANGBO_DEBUG
 
