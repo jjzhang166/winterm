@@ -12,13 +12,13 @@
 #include "putty.h"
 #include "terminal.h"
 #include "windows/message.h"
-#include "util/comapi.h"
+#include "util/comdev.h"
+
 
 #include <io.h>
 #include <fcntl.h>
 #include <windows.h>
 #include "printapi.h"
-#include "util/current_com.h"
 
 extern void *backhandle;
 extern Backend *back;
@@ -2465,10 +2465,10 @@ static void toggle_mode(Terminal *term, int mode, int query, int state) {
 			term->disptop = 0;
 			break;
 		case 50:
-			comapi_set_enable(state);
+			comdev_set_enable(state);
 			break;
 		case 51:
-			comapi_set_output(state);
+			comdev_set_output(state);
 			if (state) {
 				term_com_setup(term);
 			} else {
@@ -2476,10 +2476,10 @@ static void toggle_mode(Terminal *term, int mode, int query, int state) {
 			}
 			break;
 		case 53:
-			comapi_set_direct_mode(state);
+			comdev_set_direct_mode(state);
 			break;
 		case 54:
-			comapi_set_line_mode(state);
+			comdev_set_line_mode(state);
 			break;
 		case 1000: /* xterm mouse 1 */
 			term->xterm_mouse = state ? 1 : 0;
@@ -2579,14 +2579,14 @@ static void term_com_flush(Terminal *term) {
 	int len;
 	int size;
 
-	if (!comapi_writing_enable())
+	if (!comdev_can_write())
 		return; /* we need do nothing */
 
 	while ((size = bufchain_size(&term->com_buf)) > term->com_state) {
 		bufchain_prefix(&term->com_buf, &data, &len);
 		if (len > size - term->com_state)
 			len = size - term->com_state;
-		comapi_receive(data, len);
+		comdev_write(data, len);
 		bufchain_consume(&term->com_buf, len);
 	}
 
@@ -2597,7 +2597,7 @@ static void term_com_finish(Terminal *term) {
 	int len, size;
 	char c;
 
-	if (!comapi_writing_enable())
+	if (!comdev_can_write())
 		return; /* we need do nothing */
 
 	term_com_flush(term);
@@ -2608,11 +2608,11 @@ static void term_com_finish(Terminal *term) {
 			bufchain_consume(&term->com_buf, size);
 			break;
 		} else {
-			comapi_receive(&c, 1);
+			comdev_write(&c, 1);
 			bufchain_consume(&term->com_buf, 1);
 		}
 	}
-	comapi_set_output(0);
+	comdev_set_output(0);
 }
 
 /*
@@ -2714,6 +2714,10 @@ void com_process(char c, unsigned char *com, int *baudRate) {
 	}
 }
 
+void comapi_ex_send(char* data, int len) {
+	back->send(backhandle, data, len);
+}
+
 /*
  * Remove everything currently in `inbuf' and stick it up on the
  * in-memory display. There's a big state machine in here to
@@ -2793,7 +2797,7 @@ static void term_out(Terminal *term) {
 		}
 
 		//zhangbo
-		if (comapi_writing_enable()) {
+		if (comdev_can_write()) {
 			bufchain_add(&term->com_buf, &c, 1);
 
 			if (term->only_coming) {
@@ -3569,7 +3573,9 @@ static void term_out(Terminal *term) {
 					else
 						term->esc_query = c;
 					term->termstate = SEEN_CSI;
-				} else
+				} else {
+					unsigned char com;
+
 					switch (ANSI(c, term->esc_query)) {
 					case ANSI('Y','!'):
 					case ANSI('Z','!'):
@@ -3577,13 +3583,11 @@ static void term_out(Terminal *term) {
 					case ANSI('U','!'):
 					case ANSI('W','!'):
 					case ANSI('V','!'): //zhangbo
-						comchannel = c;
-						comselflag = 0;
-						unsigned char com = 1;
+						comdev_select_com(c);
 						int baudRate = term->esc_args[0];
 						com_process(c, &com, &baudRate);
-						comapi_setup(com, baudRate, term->esc_args[1],
-								term->esc_args[2], term->esc_args[3]);
+						comdev_setup(com, baudRate, term->esc_args[1],
+								term->esc_args[2], term->esc_args[3], comapi_ex_send);
 						term->termstate = TOPLEVEL;
 						break;
 					case 'A': /* CUU: move up N lines */
@@ -4396,6 +4400,7 @@ static void term_out(Terminal *term) {
 #endif
 						break;
 					}
+			}
 				break;
 			case SEEN_OSC:
 				term->osc_w = FALSE;

@@ -784,8 +784,7 @@ struct config_tag {
 #define FLAG_INTERACTIVE 0x0004
 GLOBAL int flags;
 
-GLOBAL char comchannel;
-GLOBAL int comselflag;
+//GLOBAL char comchannel;
 /*
  * Likewise, these two variables are set up when the application
  * initialises, and inform all default-settings accesses after

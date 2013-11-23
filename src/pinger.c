@@ -5,7 +5,7 @@
 
 #include "putty.h"
 
-extern int com_enable;
+extern BOOLEAN comdev_reading;
 struct pinger_tag {
 	int interval;
 	int pending;
@@ -20,7 +20,7 @@ static void pinger_timer(void *ctx, long now) {
 	Pinger pinger = (Pinger) ctx;
 
 	if (pinger->pending && now - pinger->next >= 0) {
-		if (enablekey == 1 && !com_enable) {
+		if (enablekey == 1 && !comdev_reading) {
 			pinger->back->special(pinger->backhandle, TS_PING);
 		}
 		pinger->pending = FALSE;

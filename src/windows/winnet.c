@@ -18,7 +18,7 @@
 
 #include <ws2tcpip.h>
 
-extern int com_enable;
+extern BOOLEAN comdev_reading;
 
 #ifndef NO_IPV6
 const struct in6_addr in6addr_any = IN6ADDR_ANY_INIT;
@@ -1272,7 +1272,7 @@ static int sk_tcp_write_oob(Socket sock, const char *buf, int len) {
 	Actual_Socket s = (Actual_Socket) sock;
 	log_write("TCP_WOOB", buf, len);
 
-	if (enablekey == 1 && !com_enable) {
+	if (enablekey == 1 && !comdev_reading) {
 		EnterCriticalSection(&s->critsec);
 		/*
 		 * Replace the buffer list on the socket with the data.

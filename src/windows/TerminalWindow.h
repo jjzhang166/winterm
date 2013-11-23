@@ -88,7 +88,7 @@ private:
 			unsigned char *output);
 protected:
 	//xiahui
-	static void MonitorCom(char* titlename);
+	static void MonitorCom(char* title);
 	static LRESULT OnTimer(WPARAM wParam, LPARAM lParam);
 	static LRESULT OnCreate(WPARAM wParam, LPARAM lParam);
 	static LRESULT OnDestroy(WPARAM wParam, LPARAM lParam);

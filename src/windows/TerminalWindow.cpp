@@ -28,13 +28,12 @@
 #include "../putty.h"
 #include <cpputils/Util.h>
 #include <iostream>
-#include "../MonitorCom.h"
 #include <cpputils/ThreadCreator.h>
 #include "../ConfigDialog.h"
 #include "../pairs.h"
 #include <cpputils/Properties.h>
 #include "../Setting.h"
-#include <util/comapi.h>
+#include <util/comdev.h>
 
 //#define ZHANGBO_DEBUG
 
@@ -44,7 +43,8 @@
 #endif
 
 extern "C" {
-extern int com_enable;
+extern char comdev_char;
+extern BOOLEAN comdev_reading;
 char localRegistKey[1024];
 char sectionName[256] = "default";
 extern int AllLock;
@@ -212,6 +212,7 @@ LRESULT TerminalWindow::OnClose(WPARAM wParam, LPARAM lParam) {
 		DestroyWindow (hwnd);
 	}
 	sfree(str);
+	return 0;
 //	return DefWindowProc(hwnd, WM_CLOSE, wParam, lParam);
 }
 
@@ -347,7 +348,7 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 	case WM_KEYDOWN:
 	case WM_SYSKEYUP:
-		if (debug || (enablekey == 1 && !com_enable)) {
+		if (debug || (enablekey == 1 && !comdev_reading)) {
 			ret = OnSysKeyUp(message, wParam, lParam);
 		} else {
 			ret = DefWindowProc(hwnd, message, wParam, lParam);
@@ -366,7 +367,7 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		ret = OnImeComposition(message, wParam, lParam);
 		break;
 	case WM_IME_CHAR:
-		if (debug || (enablekey == 1 && !com_enable)) {
+		if (debug || (enablekey == 1 && !comdev_reading)) {
 			ret = OnImeChar(message, wParam, lParam);
 		} else {
 			ret = DefWindowProc(hwnd, message, wParam, lParam);
@@ -374,7 +375,7 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 	case WM_CHAR:
 	case WM_SYSCHAR:
-		if (debug || (enablekey == 1 && !com_enable)) {
+		if (debug || (enablekey == 1 && !comdev_reading)) {
 			ret = OnChar(message, wParam, lParam);
 		} else {
 			ret = DefWindowProc(hwnd, message, wParam, lParam);
@@ -645,17 +646,19 @@ bool TerminalWindow::RegistSuccess() {
 	return false;
 }
 
-void TerminalWindow::MonitorCom(char* titlename) {
+void TerminalWindow::MonitorCom(char* title) {
+	static char last = 0;
 	string temp;
-	if ((comchannel != 0) && comselflag == 0) {
-		temp = titlename;
-		temp += CURRENTCOM;
-		temp += comchannel;
-		comselflag = 1;
-		set_title(NULL, (char *) temp.c_str());
-	} else if ((comchannel == 0) && comselflag == 1) {
-		comselflag = 0;
-		set_title(NULL, titlename);
+	if (comdev_char != last) {
+		if (comdev_char) {
+			temp = title;
+			temp += CURRENTCOM;
+			temp += comdev_char;
+			set_title(NULL, (char *) temp.c_str());
+		} else {
+			set_title(NULL, title);
+		}
+		last = comdev_char;
 	}
 }
 
@@ -834,14 +837,13 @@ void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 	PostMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); //窗口一打开就最大化
 	term_set_focus(term, GetForegroundWindow() == hwnd); //设置焦点
 	UpdateWindow(hwnd);
-	comchannel = 0;
 	enablekey = 1;
 	//进入消息循环,等待消息
+	static char titlename[100];
+	GetWindowTextA(hwnd, titlename, 100);
 	while (1) {
 		HANDLE *handles;
 		int nhandles, n;
-		static char titlename[100];
-		GetWindowTextA(hwnd, titlename, 100);
 		MonitorCom(titlename);
 		handles = handle_get_events(&nhandles);
 
@@ -879,7 +881,6 @@ void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 				PostMessageA(hwnd, WM_COMMAND, IDM_RESTARTTELNET, 0);
 				must_close_session = 0;
 			}
-
 		}
 		term_set_focus(term, GetForegroundWindow() == hwnd);
 
@@ -1058,7 +1059,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 	case IDM_COPY_PASTE:
 		term_do_copy (term);
 		DefWindowProc(hwnd, WM_COMMAND, wParam, lParam);
-		if (enablekey == 1 && !com_enable) {
+		if (enablekey == 1 && !comdev_reading) {
 			if (OpenClipboard (hwnd)) {
 				HANDLE hData = GetClipboardData(CF_TEXT);
 				buffer = (char*) GlobalLock(hData);
@@ -1067,7 +1068,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 				}
 				GlobalUnlock(hData);
 				CloseClipboard();
-				if ((comchannel == 0) && (ldisc)) {
+				if (!comdev_reading && (ldisc)) {
 					lpage_send(ldisc, kbd_codepage, buffer, strlen(buffer), 1);
 				}
 				return 0;
@@ -1076,7 +1077,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		return -1;
 		break;
 	case IDM_PASTE:
-		if (enablekey == 1 && !com_enable) {
+		if (enablekey == 1 && !comdev_reading) {
 			if (OpenClipboard (hwnd)) {
 				HANDLE hData = GetClipboardData(CF_TEXT);
 				buffer = (char*) GlobalLock(hData);
@@ -1085,7 +1086,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 				}
 				GlobalUnlock(hData);
 				CloseClipboard();
-				if ((comchannel == 0) && (ldisc)) {
+				if (!comdev_reading && (ldisc)) {
 					lpage_send(ldisc, kbd_codepage, buffer, strlen(buffer), 1);
 				}
 				return 0;
