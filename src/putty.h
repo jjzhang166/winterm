@@ -550,8 +550,8 @@ struct config_tag {
 	char comname05w[NAME_LEN];
 	char comname06v[NAME_LEN];
 
-	char registkey[1024];
-	char registcod[20];
+//	char registkey[1024];
+//	char registcod[20];
 	char keycodef[KEYCODEFXX_MAX_NUM][KEYCODEFXX_MAX_SIZE];
 	char keycodeesc[KEY_LEN];
 	char keycodeinsert[KEY_LEN];

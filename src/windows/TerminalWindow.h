@@ -5,9 +5,6 @@
  *      Author: zhangbo
  */
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
 #ifndef TERMINALWINDOW_H_
 #define TERMINALWINDOW_H_
 
@@ -76,6 +73,7 @@ private:
 
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
 			LPARAM lParam);
+	static char* GetRegistCode();
 	static bool RegistSuccess();
 	static bool Single(void * hMutex, LPCSTR name);
 	static void cfgtopalette(void);
@@ -137,6 +135,3 @@ public:
 } /* namespace term */
 #endif /* TERMINALWINDOW_H_ */
 
-//#ifdef __cplusplus
-//}
-//#endif

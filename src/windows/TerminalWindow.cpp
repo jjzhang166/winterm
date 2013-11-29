@@ -29,7 +29,6 @@
 #include <cpputils/Util.h>
 #include <iostream>
 #include <cpputils/ThreadCreator.h>
-#include "../ConfigDialog.h"
 #include "../pairs.h"
 #include <cpputils/Properties.h>
 #include "../Setting.h"
@@ -569,15 +568,12 @@ string GenerateMach(char * localRegistCod, int type) {
 	return temp;
 }
 
-bool TerminalWindow::RegistSuccess() {
-	//是否注册成功
-	int isRegSucess = 0;
-
-	int hash = 0;
+char* TerminalWindow::GetRegistCode() {
+	static char localRegistKey[20];
 	char localRegistCod[20];
-	char machcodetemp[20];
 	char registerkey[1024];
 	int rv = 0;
+	int hash = 0;
 	memset(localRegistCod, 0x00, 20);
 	//检查cpu序列号
 	terminal::GenerateMach(localRegistCod, 1);
@@ -585,61 +581,32 @@ bool TerminalWindow::RegistSuccess() {
 	//检查硬盘序列号
 	terminal::GenerateMach(localRegistCod, 2);
 	localRegistCod[9] = '-';
-
+	//检查机器码
 	terminal::GenerateMach(localRegistCod, 3);
-	memset(machcodetemp, 0x00, 20);
-	strcpy(machcodetemp, localRegistCod);
-	machcodetemp[14] = '0';
-	machcodetemp[15] = '0';
 
 	//生成机器码:
 	memset(registerkey, 0x00, 1024);
-	//农信
-//	rv = encrypt_3des("1we34fgy", "nv729b5z", "oibdk25q",
-//			(unsigned char *) localRegistCod, (unsigned char *) localRegistKey);
-
-	//莱商
-//	rv = encrypt_3des("1weidkf6", "ngutfdkd", "9frkitjd",
-//			(unsigned char *) localRegistCod, (unsigned char *) localRegistKey);
-
-	//微卓
-//	rv = encrypt_3des(":\"fI`gQM", "w?;,;n=b", "-[d^8g2B",
-//			(unsigned char *) machcodetemp, (unsigned char *) registerkey);
 
 	//汇金
 	rv = encrypt_3des("f<w$/_db", "slOx'4\\#", "*MiYzXQ#",
-			(unsigned char *) machcodetemp, (unsigned char *) registerkey);
+			(unsigned char *) localRegistCod, (unsigned char *) registerkey);
 
 	hash = Util::RSHash(registerkey);
 	sprintf(localRegistKey, "%06d", hash % 1000000);
 
-	if (rv != 0) {
-		MessageBox(NULL, ERROR_002, APPLICATION_NAME, MB_ICONERROR | MB_OK);
-		BeforClose (term);
-		exit(1);
-	}
+	return localRegistKey;
+}
 
-	if (memcmp(localRegistKey, cfg.registkey, strlen(localRegistKey)) == 0) {
-		isRegSucess = 1;
+bool TerminalWindow::RegistSuccess() {
+	Properties prop;
+	prop.SafeLoad(configpath);
+
+	if (prop.GetString("RegistKey") == GetRegistCode()) {
 		return true;
-	} else if (strlen(cfg.registkey) == 0) {
-		Setting::get_reg_default(sectionName);
-		if (memcmp(localRegistKey, cfg.registkey, strlen(localRegistKey))
-				== 0) {
-			isRegSucess = 1;
-			memcpy(cfg.registcod, localRegistCod, strlen(localRegistCod));
-			Setting::save_reg_config();
-			return true;
-		}
-	}
-	if (isRegSucess == 0) {
-		memset(cfg.registcod, 0x00, 20);
-		memset(cfg.registkey, 0x00, 1024);
-		memcpy(cfg.registcod, localRegistCod, strlen(localRegistCod));
-//		save_settings(sectionName, &cfg);
-//		Setting::save_settings(sectionName, &cfg);
-		ConfigDialog::ShowReg (hwnd);
-
+	} else {
+	// 应该提示另一个注册程序
+	//		ConfigDialog::ShowReg (hwnd);
+		MessageBox(NULL, "nihao", "nihao", 0);
 		return true;
 	}
 
@@ -680,7 +647,7 @@ void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 	if (!RegistSuccess()) {
 		return;
 	}
-	ConfigDialog::set_cfgto_uchar();
+//	ConfigDialog::set_cfgto_uchar();
 	init_pairs();
 	Update_KeyPairs();
 
@@ -1009,9 +976,9 @@ void TerminalWindow::start_backend(void) {
 	if (*cfg.wintitle) {
 		title = cfg.wintitle;
 	} else {
-		sprintf(msg, "%s - %s   %s:%s    section:%s  %s:%s  %s:%s ", realhost,
+		sprintf(msg, "%s - %s   %s:%s    section:%s  %s:%s ", realhost,
 				appname, CURRENTUSER, sysusername, sectionName, SCREENNUM,
-				cfg.screennum, REGISTKEY, cfg.registkey);
+				cfg.screennum);
 		title = msg;
 	}
 	sfree(realhost);
@@ -1107,71 +1074,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		close_session();
 		break;
 	case IDM_NEWTELNET: {
-		ConfigDialog::ShowNewTerm (hwnd);
-//		char b[2048];
-//		char c[30], *cl;
-//		int freecl = FALSE;
-//		BOOL inherit_handles;
-//		STARTUPINFO si;
-//		PROCESS_INFORMATION pi;
-//		HANDLE filemap = NULL;
-//
-//		if (wParam == IDM_DUPSESS) {
-//			/*
-//			 * Allocate a file-mapping memory chunk for the
-//			 * config structure.
-//			 */
-//			SECURITY_ATTRIBUTES sa;
-//			Config *p;
-//
-//			sa.nLength = sizeof(sa);
-//			sa.lpSecurityDescriptor = NULL;
-//			sa.bInheritHandle = TRUE;
-//			filemap = CreateFileMapping(INVALID_HANDLE_VALUE, &sa,
-//					PAGE_READWRITE, 0, sizeof(Config), NULL);
-//			if (filemap && filemap != INVALID_HANDLE_VALUE) {
-//				p = (Config *) MapViewOfFile(filemap, FILE_MAP_WRITE, 0, 0,
-//						sizeof(Config));
-//				if (p) {
-//					*p = cfg; /* structure copy */
-//					UnmapViewOfFile(p);
-//				}
-//			}
-//			inherit_handles = TRUE;
-//			sprintf(c, "putty &%p", filemap);
-//			cl = c;
-//		} else if (wParam == IDM_SAVEDSESS) {
-//			unsigned int sessno = ((lParam - IDM_SAVED_MIN) / MENU_SAVED_STEP)
-//					+ 1;
-//			if (sessno < (unsigned) sesslist.nsessions) {
-//				char *session = sesslist.sessions[sessno];
-//				/* XXX spaces? quotes? "-load"? */
-//				cl = dupprintf("putty @%s", session);
-//				inherit_handles = FALSE;
-//				freecl = TRUE;
-//			} else
-//				break;
-//		} else /* IDM_NEWSESS */
-//		{
-//			cl = NULL;
-//			inherit_handles = FALSE;
-//		}
-//
-//		GetModuleFileName(NULL, b, sizeof(b) - 1);
-//		si.cb = sizeof(si);
-//		si.lpReserved = NULL;
-//		si.lpDesktop = NULL;
-//		si.lpTitle = NULL;
-//		si.dwFlags = 0;
-//		si.cbReserved2 = 0;
-//		si.lpReserved2 = NULL;
-//		CreateProcess(b, cl, NULL, NULL, inherit_handles, NORMAL_PRIORITY_CLASS,
-//				NULL, NULL, &si, &pi);
-//
-//		if (filemap)
-//			CloseHandle(filemap);
-//		if (freecl)
-//			sfree(cl);
+//		ConfigDialog::ShowNewTerm (hwnd);
 	}
 		break;
 	case IDM_ALLSCREENSHOW:
@@ -1187,8 +1090,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		ShowWindow(hwnd, SW_MINIMIZE);
 		break;
 	case IDM_HELPDOC:
-		ConfigDialog::ShowHelp (hwnd);
-//		ShellExecute(NULL, "open", ".\\help.chm", NULL, NULL, SW_SHOW);
+//		ConfigDialog::ShowHelp (hwnd);
 		break;
 	case IDM_DESCRIPTION:
 		char pdfexe[MAX_PATH];
@@ -1203,10 +1105,6 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		WinExec("calc.exe", SW_SHOW);
 	}
 		break;
-//	case IDM_ABOUTME: {
-//		showabout(hwnd);
-//	}
-//		break;
 	case IDM_EXIT_SYSTEM:
 	case IDM_EXIT: {
 		char *str;
@@ -1231,14 +1129,14 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 	}
 		break;
 	case IDM_TEST: {
-		if (strlen(cfg.adminpassword) != 0) {
-			ConfigDialog::ShowAdmin(hwnd);
-			if (cfg.admin == 1) {
-				ConfigDialog::ShowSet(hwnd);
-			}
-		} else {
-			ConfigDialog::ShowSet(hwnd);
-		}
+//		if (strlen(cfg.adminpassword) != 0) {
+//			ConfigDialog::ShowAdmin(hwnd);
+//			if (cfg.admin == 1) {
+//				ConfigDialog::ShowSet(hwnd);
+//			}
+//		} else {
+//			ConfigDialog::ShowSet(hwnd);
+//		}
 	}
 		break;
 	}

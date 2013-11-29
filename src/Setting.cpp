@@ -67,14 +67,6 @@ void Setting::load_settings(char *section, Config * cfg) {
 	load_open_settings(&prop, cfg);
 }
 
-void Setting::get_reg_default(char *section) {
-	sprintf(filepath, "%s\\%s.txt", currentpath, section);
-	Properties prop;
-	prop.SafeLoad(filepath);
-	gpps(&prop, "RegistKey", "", cfg.registkey, 1024);
-	gpps(&prop, "RegistCod", "", cfg.registcod, 20);
-}
-
 void Setting::save_settings(char *section, Config * cfg) {
 	sprintf(filepath, "%s\\%s.txt", currentpath, section);
 	Properties prop;
@@ -207,18 +199,15 @@ void Setting::gprefs(Properties *sesskey, char *name, char *def,
 }
 
 void Setting::save_reg_config() {
-	Properties prop;
-	prop.SafeLoad(configpath);
-	prop.Put("RegistKey", cfg.registkey);
-	prop.Put("RegistCod", cfg.registcod);
-	prop.SafeSave(configpath);
+//	Properties prop;
+//	prop.SafeLoad(configpath);
+////	prop.Put("RegistKey", cfg.registkey);
+//	prop.SafeSave(configpath);
 }
 
 void Setting::get_config() {
 	Properties prop;
 	prop.SafeLoad(configpath);
-	gpps(&prop, "RegistKey", "", cfg.registkey, 1024);
-	gpps(&prop, "RegistCod", "", cfg.registcod, 20);
 	gpps(&prop, "host", "192.168.1.118", cfg.updateip, NAME_LEN);
 	gpps(&prop, "SysUser", "", cfg.sysuser, NAME_LEN);
 	gpps(&prop, "SysPass", "", cfg.syspass, NAME_LEN);
