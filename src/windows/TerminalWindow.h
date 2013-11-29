@@ -125,6 +125,7 @@ protected:
 	static LRESULT OnMouseWheel(UINT message, WPARAM wParam, LPARAM lParam);
 	static void GenerateMach(char * localRegistCod, int type);
 
+	static void set_cfgto_uchar();
 public:
 	TerminalWindow(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show);
 	virtual ~TerminalWindow();

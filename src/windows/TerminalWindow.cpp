@@ -195,8 +195,6 @@ LRESULT TerminalWindow::OnCreate(WPARAM wParam, LPARAM lParam) {
 
 LRESULT TerminalWindow::OnDestroy(WPARAM wParam, LPARAM lParam) {
 	show_mouseptr(1);
-//	save_settings(sectionName, &cfg);
-	Setting::save_settings(sectionName, &cfg);
 	PostQuitMessage(0);
 	return DefWindowProc(hwnd, WM_DESTROY, wParam, lParam);
 }
@@ -629,6 +627,22 @@ void TerminalWindow::MonitorCom(char* title) {
 	}
 }
 
+void TerminalWindow::set_cfgto_uchar() {
+	for (int i = 1; i < KEYCODEFXX_MAX_NUM; i++) {
+		KeyCodeLenFXX[i] = 0;
+		for (unsigned int j = 0; j < strlen(cfg.keycodef[i]); j++) {
+			if ((cfg.keycodef[i][j] == 0x5E)
+					&& (cfg.keycodef[i][j + 1]) == 0x5B) {
+				j++;
+				KeyCodeFXX[i - 1][KeyCodeLenFXX[i - 1]++] = 0X1B;
+			} else
+				KeyCodeFXX[i - 1][KeyCodeLenFXX[i - 1]++] = cfg.keycodef[i][j];
+		}
+
+	}
+
+}
+
 void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 
 	WNDCLASS wndclass; //定义窗口结构体类
@@ -647,7 +661,7 @@ void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 	if (!RegistSuccess()) {
 		return;
 	}
-//	ConfigDialog::set_cfgto_uchar();
+	set_cfgto_uchar();
 	init_pairs();
 	Update_KeyPairs();
 
@@ -1113,8 +1127,6 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		if (!cfg.warn_on_close || session_closed
 				|| MessageBox(hwnd, SURE_CLOSE_CURRENTWIND, str,
 						MB_ICONWARNING | MB_OKCANCEL | MB_DEFBUTTON1) == IDOK) {
-//			save_settings(sectionName, &cfg);
-			Setting::save_settings(sectionName, &cfg);
 			DestroyWindow(hwnd);
 		}
 		sfree(str);
@@ -1423,8 +1435,8 @@ LRESULT TerminalWindow::OnInitMenupopup(UINT message, WPARAM wParam,
 	if ((HMENU) wParam == savedsess_menu) {
 		/* About to pop up Saved Sessions sub-menu.
 		 * Refresh the session list. */
-		get_sesslist(&sesslist, FALSE); /* free */
-		get_sesslist(&sesslist, TRUE);
+//		get_sesslist(&sesslist, FALSE); /* free */
+//		get_sesslist(&sesslist, TRUE);
 		update_savedsess_menu();
 		return 0;
 	}
@@ -3015,10 +3027,13 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show) {
 	}
 	Util::GetCurrentPath(currentpath);
 	sprintf(configpath, "%s\\config.txt", currentpath);
-	Setting::get_config();
+	Setting::LoadConfigsFile(configpath);
 	default_protocol = be_default_protocol;
 	default_port = 23;
-	Setting::load_settings(sectionName, &cfg);
+
+	char filepath[1024];
+	sprintf(filepath, "%s\\%s.txt", currentpath, sectionName);
+	Setting::LoadPropertiesFile(filepath, &cfg);
 
 	if ((lasterror == ERROR_ALREADY_EXISTS) && (cfg.allowrepeat == 0)) {
 		Util::MaxWindow(APPLICATION_NAME);
