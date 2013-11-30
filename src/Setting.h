@@ -22,9 +22,13 @@ public:
 	Setting();
 	virtual ~Setting();
 
-	static void LoadConfigsFile(const char* file);
+	static void LoadConfigsFile(const char* file, Config* cfg);
 
 	static void LoadPropertiesFile(const char* section, Config* cfg);
+
+	static void SaveConfigsFile(const char* file, Config* cfg);
+
+	static void SavePropertiesFile(const char* section, Config* cfg);
 
 private:
 	static int key2val(const struct keyval *mapping, int nmaps, char *key);
@@ -38,6 +42,19 @@ private:
 	static void gprefs(Properties *sesskey, const char *name, const char *def,
 			const struct keyval *mapping, int nvals, int *array);
 	static void LoadProperties(Properties *sesskey, Config *cfg);
+
+	static void write_setting_s(Properties *handle, const char *key,
+			const char *value);
+	static void write_setting_i(Properties *handle, const char *key, int value);
+	static void wmap(Properties *handle, char const *key, char const *value,
+			int len);
+	static void wprefs(Properties *sesskey, char *name,
+			const struct keyval *mapping, int nvals, int *array);
+	static void write_setting_fontspec(Properties *handle, const char *name,
+			FontSpec font);
+	static void write_setting_filename(Properties *handle, const char *name,
+			Filename result);
+	static void SaveProperties(Properties *sesskey, Config *cfg);
 };
 
 #endif /* SETTING_H_ */

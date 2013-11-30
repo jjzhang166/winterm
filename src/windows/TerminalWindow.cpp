@@ -32,6 +32,7 @@
 #include "../pairs.h"
 #include <cpputils/Properties.h>
 #include "../Setting.h"
+#include "ConfigDialog.h"
 #include <util/comdev.h>
 
 //#define ZHANGBO_DEBUG
@@ -1088,7 +1089,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		close_session();
 		break;
 	case IDM_NEWTELNET: {
-//		ConfigDialog::ShowNewTerm (hwnd);
+		ConfigDialog::ShowNewTerm (hwnd);
 	}
 		break;
 	case IDM_ALLSCREENSHOW:
@@ -1104,7 +1105,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		ShowWindow(hwnd, SW_MINIMIZE);
 		break;
 	case IDM_HELPDOC:
-//		ConfigDialog::ShowHelp (hwnd);
+		ConfigDialog::ShowHelp (hwnd);
 		break;
 	case IDM_DESCRIPTION:
 		char pdfexe[MAX_PATH];
@@ -1141,14 +1142,14 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 	}
 		break;
 	case IDM_TEST: {
-//		if (strlen(cfg.adminpassword) != 0) {
-//			ConfigDialog::ShowAdmin(hwnd);
-//			if (cfg.admin == 1) {
-//				ConfigDialog::ShowSet(hwnd);
-//			}
-//		} else {
-//			ConfigDialog::ShowSet(hwnd);
-//		}
+		if (strlen(cfg.adminpassword) != 0) {
+			ConfigDialog::ShowAdmin(hwnd);
+			if (cfg.admin == 1) {
+				ConfigDialog::ShowSet(hwnd);
+			}
+		} else {
+			ConfigDialog::ShowSet(hwnd);
+		}
 	}
 		break;
 	}
@@ -3027,13 +3028,15 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show) {
 	}
 	Util::GetCurrentPath(currentpath);
 	sprintf(configpath, "%s\\config.txt", currentpath);
-	Setting::LoadConfigsFile(configpath);
+	Setting::LoadConfigsFile(configpath, &cfg);
 	default_protocol = be_default_protocol;
 	default_port = 23;
 
 	char filepath[1024];
 	sprintf(filepath, "%s\\%s.txt", currentpath, sectionName);
 	Setting::LoadPropertiesFile(filepath, &cfg);
+
+	LoadConfigAndProperties();
 
 	if ((lasterror == ERROR_ALREADY_EXISTS) && (cfg.allowrepeat == 0)) {
 		Util::MaxWindow(APPLICATION_NAME);
@@ -3060,10 +3063,8 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show) {
 			if (fp == NULL) {
 				string str = "net use ";
 				str += cfg.fprintname;
-				//string cmd1 = str + " /delete";
 				string cmd2 = str + " \\\\127.0.0.1\\";
 				cmd2 = cmd2 + cfg.fpshare + " /persistent:yes";
-				//system(cmd1.c_str());
 				system(cmd2.c_str());
 			} else {
 				fclose(fp);
