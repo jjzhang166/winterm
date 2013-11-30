@@ -571,7 +571,6 @@ char* TerminalWindow::GetRegistCode() {
 	static char localRegistKey[20];
 	char localRegistCod[20];
 	char registerkey[1024];
-	int rv = 0;
 	int hash = 0;
 	memset(localRegistCod, 0x00, 20);
 	//检查cpu序列号
@@ -583,33 +582,37 @@ char* TerminalWindow::GetRegistCode() {
 	//检查机器码
 	terminal::GenerateMach(localRegistCod, 3);
 
+    char machcodetemp[20];
+    memset(machcodetemp, 0x00, 20);
+    strcpy(machcodetemp, localRegistCod);
+    machcodetemp[14] = '0';
+    machcodetemp[15] = '0';
+
 	//生成机器码:
 	memset(registerkey, 0x00, 1024);
 
 	//汇金
-	rv = encrypt_3des("f<w$/_db", "slOx'4\\#", "*MiYzXQ#",
-			(unsigned char *) localRegistCod, (unsigned char *) registerkey);
+	encrypt_3des("f<w$/_db", "slOx'4\\#", "*MiYzXQ#",
+			(unsigned char *) machcodetemp, (unsigned char *) registerkey);
 
 	hash = Util::RSHash(registerkey);
 	sprintf(localRegistKey, "%06d", hash % 1000000);
 
+	strcpy(cfg.registcod, localRegistCod);
+	strcpy(cfg.registkey, localRegistKey);
 	return localRegistKey;
 }
 
 bool TerminalWindow::RegistSuccess() {
 	Properties prop;
 	prop.SafeLoad(configpath);
-
-	if (prop.GetString("RegistKey") == GetRegistCode()) {
-		return true;
-	} else {
-	// 应该提示另一个注册程序
-	//		ConfigDialog::ShowReg (hwnd);
-		MessageBox(NULL, "nihao", "nihao", 0);
-		return true;
+	char* registkey = GetRegistCode();
+	while(prop.GetString("RegistKey") != registkey) {
+		ConfigDialog::ShowReg(hwnd);
+		prop.Clear();
+		prop.SafeLoad(configpath);
 	}
-
-	return false;
+	return true;
 }
 
 void TerminalWindow::MonitorCom(char* title) {

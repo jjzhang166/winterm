@@ -42,6 +42,8 @@ Setting::~Setting() {
 void Setting::LoadConfigsFile(const char* file, Config* cfg) {
 	Properties prop;
 	prop.SafeLoad(configpath);
+	gpps(&prop, "RegistKey", "000000", cfg->registkey, NAME_LEN);
+	gpps(&prop, "RegistCod", "0000-0000-0000", cfg->registcod, NAME_LEN);
 	gpps(&prop, "host", "127.0.0.1", cfg->updateip, NAME_LEN);
 	gpps(&prop, "SysUser", "", cfg->sysuser, NAME_LEN);
 	gpps(&prop, "SysPass", "", cfg->syspass, NAME_LEN);
@@ -598,6 +600,7 @@ void Setting::LoadPropertiesFile(const char* section, Config* cfg) {
 void Setting::SaveConfigsFile(const char* file, Config* cfg) {
 	Properties prop;
 	prop.SafeLoad(file);
+	prop.PutString("RegistKey", cfg->registkey);
 	prop.PutInteger("PrintMode", cfg->printmode);
 	prop.PutString("FilePrintName", cfg->fprintname);
 	prop.PutInteger("AllowRepeat", cfg->allowrepeat);
@@ -610,7 +613,6 @@ void Setting::SaveConfigsFile(const char* file, Config* cfg) {
 	prop.PutString("Linkpath", cfg->linkpath);
 	prop.PutString("SharePrinterName", cfg->fpshare);
 	prop.SafeSave(file);
-//	get_config();
 }
 
 void Setting::write_setting_filename(Properties *handle, const char *name,

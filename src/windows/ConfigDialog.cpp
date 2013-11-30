@@ -17,7 +17,7 @@
 #include "util.h"
 
 extern "C" {
-extern char localRegistKey[1024];
+//extern char localRegistKey[1024];
 extern int tranKeyCode(char *keyStr, unsigned char *keyCodeStr);
 extern unsigned char KeyCodeFXX[12][8];
 extern int KeyCodeLenFXX[12];
@@ -123,7 +123,7 @@ static int CALLBACK RegProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		CloseHandle(hMutex);
 		exit(1);
 	case WM_INITDIALOG:
-		SetDlgItemText(hwnd, IDC_STATICMACHCODE, config.registcod);
+		SetDlgItemText(hwnd, IDC_STATICMACHCODE, cfg.registcod);
 		SetWindowTextA(hwnd, APPLICATION_NAME);
 		return 1;
 	case WM_COMMAND:
@@ -133,7 +133,7 @@ static int CALLBACK RegProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 				HGLOBAL hmem = GlobalAlloc(GMEM_DDESHARE, 256);
 				LPVOID pmem = GlobalLock(hmem);
 				EmptyClipboard();
-				memcpy(pmem, config.registcod, strlen(config.registcod));
+				memcpy(pmem, cfg.registcod, strlen(cfg.registcod));
 				SetClipboardData(CF_TEXT, hmem);
 				CloseClipboard();
 				GlobalUnlock(hmem);
@@ -144,16 +144,14 @@ static int CALLBACK RegProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 		case IDC_REG:
 			memset(InputKey, 0x00, 128);
 			GetDlgItemText(hwnd, IDC_REGCODE, InputKey, 128);
-			if (memcmp(localRegistKey, InputKey,
-					strlen(localRegistKey) > strlen(InputKey) ?
-							strlen(localRegistKey) : strlen(InputKey)) != 0) {
+			if (strcmp(cfg.registkey, InputKey) != 0) {
 				MessageBox(NULL, MSG_ERROR_REGKEY, APPLICATION_NAME,
 				MB_OK | MB_ICONWARNING);
 				memset(InputKey, 0x00, 128);
 				SetDlgItemText(hwnd, IDC_REGCODE, InputKey);
 				return 0;
 			}
-			strcpy(config.registkey, localRegistKey);
+			strcpy(config.registkey, InputKey);
 			Save();
 			EndDialog(hwnd, TRUE);
 			break;
