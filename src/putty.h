@@ -20,6 +20,14 @@ extern "C" {
 #endif
 #endif
 
+//日志类型
+#define SOCK_SEND "SCK_SEND"
+#define SOCK_RECV "SCK_RECV"
+#define PRT_DATA  "PRT_DATA"
+#define PRT_ENDS  "PRT_ENDS"
+#define SYS_INFO  "SYS_INFO"
+#define MSG_INFO  "MSG_INFO"
+
 #define IDM_NEW                         40001
 #define IDM_OPEN                        40002
 #define IDM_SAVE                        40003
