@@ -15,7 +15,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "window.h"
-#include "../util/log.h"
+#include <util/log.h>
 
 #include "../resources/resource.h"
 #include "TerminalWindow.h"
@@ -24,17 +24,16 @@
 #include "../ldisc.h"
 #include "../ldiscucs.h"
 #include "../getPcMsgApi.h"
-#include "../util/encrypt.h"
+#include <util/encrypt.h>
 #include "../putty.h"
-#include "../cpputils/Util.h"
+#include <cpputils/Util.h>
 #include <iostream>
-#include "../MonitorCom.h"
-#include "../cpputils/ThreadCreator.h"
-#include "../ConfigDialog.h"
+#include <cpputils/ThreadCreator.h>
 #include "../pairs.h"
-#include "../cpputils/Properties.h"
+#include <cpputils/Properties.h>
 #include "../Setting.h"
-#include "../util/comapi.h"
+#include "ConfigDialog.h"
+#include <util/comdev.h>
 
 //#define ZHANGBO_DEBUG
 
@@ -44,7 +43,8 @@
 #endif
 
 extern "C" {
-extern int com_enable;
+extern char comdev_char;
+extern BOOLEAN comdev_reading;
 char localRegistKey[1024];
 char sectionName[256] = "default";
 extern int AllLock;
@@ -196,8 +196,6 @@ LRESULT TerminalWindow::OnCreate(WPARAM wParam, LPARAM lParam) {
 
 LRESULT TerminalWindow::OnDestroy(WPARAM wParam, LPARAM lParam) {
 	show_mouseptr(1);
-//	save_settings(sectionName, &cfg);
-	Setting::save_settings(sectionName, &cfg);
 	PostQuitMessage(0);
 	return DefWindowProc(hwnd, WM_DESTROY, wParam, lParam);
 }
@@ -212,6 +210,7 @@ LRESULT TerminalWindow::OnClose(WPARAM wParam, LPARAM lParam) {
 		DestroyWindow (hwnd);
 	}
 	sfree(str);
+	return 0;
 //	return DefWindowProc(hwnd, WM_CLOSE, wParam, lParam);
 }
 
@@ -347,7 +346,7 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 	case WM_KEYDOWN:
 	case WM_SYSKEYUP:
-		if (debug || (enablekey == 1 && !com_enable)) {
+		if (debug || (enablekey == 1 && !comdev_reading)) {
 			ret = OnSysKeyUp(message, wParam, lParam);
 		} else {
 			ret = DefWindowProc(hwnd, message, wParam, lParam);
@@ -366,7 +365,7 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		ret = OnImeComposition(message, wParam, lParam);
 		break;
 	case WM_IME_CHAR:
-		if (debug || (enablekey == 1 && !com_enable)) {
+		if (debug || (enablekey == 1 && !comdev_reading)) {
 			ret = OnImeChar(message, wParam, lParam);
 		} else {
 			ret = DefWindowProc(hwnd, message, wParam, lParam);
@@ -374,7 +373,7 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		break;
 	case WM_CHAR:
 	case WM_SYSCHAR:
-		if (debug || (enablekey == 1 && !com_enable)) {
+		if (debug || (enablekey == 1 && !comdev_reading)) {
 			ret = OnChar(message, wParam, lParam);
 		} else {
 			ret = DefWindowProc(hwnd, message, wParam, lParam);
@@ -568,15 +567,11 @@ string GenerateMach(char * localRegistCod, int type) {
 	return temp;
 }
 
-bool TerminalWindow::RegistSuccess() {
-	//是否注册成功
-	int isRegSucess = 0;
-
-	int hash = 0;
+char* TerminalWindow::GetRegistCode() {
+	static char localRegistKey[20];
 	char localRegistCod[20];
-	char machcodetemp[20];
 	char registerkey[1024];
-	int rv = 0;
+	int hash = 0;
 	memset(localRegistCod, 0x00, 20);
 	//检查cpu序列号
 	terminal::GenerateMach(localRegistCod, 1);
@@ -584,79 +579,72 @@ bool TerminalWindow::RegistSuccess() {
 	//检查硬盘序列号
 	terminal::GenerateMach(localRegistCod, 2);
 	localRegistCod[9] = '-';
-
+	//检查机器码
 	terminal::GenerateMach(localRegistCod, 3);
-	memset(machcodetemp, 0x00, 20);
-	strcpy(machcodetemp, localRegistCod);
-	machcodetemp[14] = '0';
-	machcodetemp[15] = '0';
+
+    char machcodetemp[20];
+    memset(machcodetemp, 0x00, 20);
+    strcpy(machcodetemp, localRegistCod);
+    machcodetemp[14] = '0';
+    machcodetemp[15] = '0';
 
 	//生成机器码:
 	memset(registerkey, 0x00, 1024);
-	//农信
-//	rv = encrypt_3des("1we34fgy", "nv729b5z", "oibdk25q",
-//			(unsigned char *) localRegistCod, (unsigned char *) localRegistKey);
-
-	//莱商
-//	rv = encrypt_3des("1weidkf6", "ngutfdkd", "9frkitjd",
-//			(unsigned char *) localRegistCod, (unsigned char *) localRegistKey);
-
-	//微卓
-//	rv = encrypt_3des(":\"fI`gQM", "w?;,;n=b", "-[d^8g2B",
-//			(unsigned char *) machcodetemp, (unsigned char *) registerkey);
 
 	//汇金
-	rv = encrypt_3des("f<w$/_db", "slOx'4\\#", "*MiYzXQ#",
+	encrypt_3des("f<w$/_db", "slOx'4\\#", "*MiYzXQ#",
 			(unsigned char *) machcodetemp, (unsigned char *) registerkey);
 
 	hash = Util::RSHash(registerkey);
 	sprintf(localRegistKey, "%06d", hash % 1000000);
 
-	if (rv != 0) {
-		MessageBox(NULL, ERROR_002, APPLICATION_NAME, MB_ICONERROR | MB_OK);
-		BeforClose (term);
-		exit(1);
-	}
-
-	if (memcmp(localRegistKey, cfg.registkey, strlen(localRegistKey)) == 0) {
-		isRegSucess = 1;
-		return true;
-	} else if (strlen(cfg.registkey) == 0) {
-		Setting::get_reg_default(sectionName);
-		if (memcmp(localRegistKey, cfg.registkey, strlen(localRegistKey))
-				== 0) {
-			isRegSucess = 1;
-			memcpy(cfg.registcod, localRegistCod, strlen(localRegistCod));
-			Setting::save_reg_config();
-			return true;
-		}
-	}
-	if (isRegSucess == 0) {
-		memset(cfg.registcod, 0x00, 20);
-		memset(cfg.registkey, 0x00, 1024);
-		memcpy(cfg.registcod, localRegistCod, strlen(localRegistCod));
-//		save_settings(sectionName, &cfg);
-//		Setting::save_settings(sectionName, &cfg);
-		ConfigDialog::ShowReg (hwnd);
-
-		return true;
-	}
-
-	return false;
+	strcpy(cfg.registcod, localRegistCod);
+	strcpy(cfg.registkey, localRegistKey);
+	return localRegistKey;
 }
 
-void TerminalWindow::MonitorCom(char* titlename) {
-	string temp;
-	if ((comchannel != 0) && comselflag == 0) {
-		temp = titlename;
-		temp += CURRENTCOM;
-		temp += comchannel;
-		comselflag = 1;
-		set_title(NULL, (char *) temp.c_str());
-	} else if ((comchannel == 0) && comselflag == 1) {
-		comselflag = 0;
-		set_title(NULL, titlename);
+bool TerminalWindow::RegistSuccess() {
+	Properties prop;
+	prop.SafeLoad(configpath);
+	char* registkey = GetRegistCode();
+	while(prop.GetString("RegistKey") != registkey) {
+		ConfigDialog::ShowReg(hwnd);
+		prop.Clear();
+		prop.SafeLoad(configpath);
 	}
+	return true;
+}
+
+void TerminalWindow::MonitorCom(char* title) {
+	static char last = 0;
+	string temp;
+	if (comdev_char != last) {
+		if (comdev_char) {
+			temp = title;
+			temp += CURRENTCOM;
+			temp += comdev_char;
+			set_title(NULL, (char *) temp.c_str());
+		} else {
+			set_title(NULL, title);
+		}
+		last = comdev_char;
+	}
+}
+
+void TerminalWindow::set_cfgto_uchar() {
+	for (int i = 1; i < KEYCODEFXX_MAX_NUM; i++) {
+		KeyCodeLenFXX[i] = 0;
+		for (unsigned int j = 0; j < strlen(cfg.keycodef[i]); j++) {
+			if ((cfg.keycodef[i][j] == 0x5E)
+					&& (cfg.keycodef[i][j + 1]) == 0x5B) {
+				j++;
+				KeyCodeFXX[i - 1][KeyCodeLenFXX[i - 1]++] = 0X1B;
+			} else
+				KeyCodeFXX[i - 1][KeyCodeLenFXX[i - 1]++] = cfg.keycodef[i][j];
+		}
+
+	}
+
 }
 
 void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
@@ -677,7 +665,7 @@ void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 	if (!RegistSuccess()) {
 		return;
 	}
-	ConfigDialog::set_cfgto_uchar();
+	set_cfgto_uchar();
 	init_pairs();
 	Update_KeyPairs();
 
@@ -834,14 +822,13 @@ void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 	PostMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0); //窗口一打开就最大化
 	term_set_focus(term, GetForegroundWindow() == hwnd); //设置焦点
 	UpdateWindow(hwnd);
-	comchannel = 0;
 	enablekey = 1;
 	//进入消息循环,等待消息
+	static char titlename[100];
+	GetWindowTextA(hwnd, titlename, 100);
 	while (1) {
 		HANDLE *handles;
 		int nhandles, n;
-		static char titlename[100];
-		GetWindowTextA(hwnd, titlename, 100);
 		MonitorCom(titlename);
 		handles = handle_get_events(&nhandles);
 
@@ -879,7 +866,6 @@ void TerminalWindow::Run(HINSTANCE inst) { //, const char* name
 				PostMessageA(hwnd, WM_COMMAND, IDM_RESTARTTELNET, 0);
 				must_close_session = 0;
 			}
-
 		}
 		term_set_focus(term, GetForegroundWindow() == hwnd);
 
@@ -1008,9 +994,9 @@ void TerminalWindow::start_backend(void) {
 	if (*cfg.wintitle) {
 		title = cfg.wintitle;
 	} else {
-		sprintf(msg, "%s - %s   %s:%s    section:%s  %s:%s  %s:%s ", realhost,
+		sprintf(msg, "%s - %s   %s:%s    section:%s  %s:%s ", realhost,
 				appname, CURRENTUSER, sysusername, sectionName, SCREENNUM,
-				cfg.screennum, REGISTKEY, cfg.registkey);
+				cfg.screennum);
 		title = msg;
 	}
 	sfree(realhost);
@@ -1058,7 +1044,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 	case IDM_COPY_PASTE:
 		term_do_copy (term);
 		DefWindowProc(hwnd, WM_COMMAND, wParam, lParam);
-		if (enablekey == 1 && !com_enable) {
+		if (enablekey == 1 && !comdev_reading) {
 			if (OpenClipboard (hwnd)) {
 				HANDLE hData = GetClipboardData(CF_TEXT);
 				buffer = (char*) GlobalLock(hData);
@@ -1067,7 +1053,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 				}
 				GlobalUnlock(hData);
 				CloseClipboard();
-				if ((comchannel == 0) && (ldisc)) {
+				if (!comdev_reading && (ldisc)) {
 					lpage_send(ldisc, kbd_codepage, buffer, strlen(buffer), 1);
 				}
 				return 0;
@@ -1076,7 +1062,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		return -1;
 		break;
 	case IDM_PASTE:
-		if (enablekey == 1 && !com_enable) {
+		if (enablekey == 1 && !comdev_reading) {
 			if (OpenClipboard (hwnd)) {
 				HANDLE hData = GetClipboardData(CF_TEXT);
 				buffer = (char*) GlobalLock(hData);
@@ -1085,7 +1071,7 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 				}
 				GlobalUnlock(hData);
 				CloseClipboard();
-				if ((comchannel == 0) && (ldisc)) {
+				if (!comdev_reading && (ldisc)) {
 					lpage_send(ldisc, kbd_codepage, buffer, strlen(buffer), 1);
 				}
 				return 0;
@@ -1107,70 +1093,6 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		break;
 	case IDM_NEWTELNET: {
 		ConfigDialog::ShowNewTerm (hwnd);
-//		char b[2048];
-//		char c[30], *cl;
-//		int freecl = FALSE;
-//		BOOL inherit_handles;
-//		STARTUPINFO si;
-//		PROCESS_INFORMATION pi;
-//		HANDLE filemap = NULL;
-//
-//		if (wParam == IDM_DUPSESS) {
-//			/*
-//			 * Allocate a file-mapping memory chunk for the
-//			 * config structure.
-//			 */
-//			SECURITY_ATTRIBUTES sa;
-//			Config *p;
-//
-//			sa.nLength = sizeof(sa);
-//			sa.lpSecurityDescriptor = NULL;
-//			sa.bInheritHandle = TRUE;
-//			filemap = CreateFileMapping(INVALID_HANDLE_VALUE, &sa,
-//					PAGE_READWRITE, 0, sizeof(Config), NULL);
-//			if (filemap && filemap != INVALID_HANDLE_VALUE) {
-//				p = (Config *) MapViewOfFile(filemap, FILE_MAP_WRITE, 0, 0,
-//						sizeof(Config));
-//				if (p) {
-//					*p = cfg; /* structure copy */
-//					UnmapViewOfFile(p);
-//				}
-//			}
-//			inherit_handles = TRUE;
-//			sprintf(c, "putty &%p", filemap);
-//			cl = c;
-//		} else if (wParam == IDM_SAVEDSESS) {
-//			unsigned int sessno = ((lParam - IDM_SAVED_MIN) / MENU_SAVED_STEP)
-//					+ 1;
-//			if (sessno < (unsigned) sesslist.nsessions) {
-//				char *session = sesslist.sessions[sessno];
-//				/* XXX spaces? quotes? "-load"? */
-//				cl = dupprintf("putty @%s", session);
-//				inherit_handles = FALSE;
-//				freecl = TRUE;
-//			} else
-//				break;
-//		} else /* IDM_NEWSESS */
-//		{
-//			cl = NULL;
-//			inherit_handles = FALSE;
-//		}
-//
-//		GetModuleFileName(NULL, b, sizeof(b) - 1);
-//		si.cb = sizeof(si);
-//		si.lpReserved = NULL;
-//		si.lpDesktop = NULL;
-//		si.lpTitle = NULL;
-//		si.dwFlags = 0;
-//		si.cbReserved2 = 0;
-//		si.lpReserved2 = NULL;
-//		CreateProcess(b, cl, NULL, NULL, inherit_handles, NORMAL_PRIORITY_CLASS,
-//				NULL, NULL, &si, &pi);
-//
-//		if (filemap)
-//			CloseHandle(filemap);
-//		if (freecl)
-//			sfree(cl);
 	}
 		break;
 	case IDM_ALLSCREENSHOW:
@@ -1187,7 +1109,6 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		break;
 	case IDM_HELPDOC:
 		ConfigDialog::ShowHelp (hwnd);
-//		ShellExecute(NULL, "open", ".\\help.chm", NULL, NULL, SW_SHOW);
 		break;
 	case IDM_DESCRIPTION:
 		char pdfexe[MAX_PATH];
@@ -1202,10 +1123,6 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		WinExec("calc.exe", SW_SHOW);
 	}
 		break;
-//	case IDM_ABOUTME: {
-//		showabout(hwnd);
-//	}
-//		break;
 	case IDM_EXIT_SYSTEM:
 	case IDM_EXIT: {
 		char *str;
@@ -1214,8 +1131,6 @@ LRESULT TerminalWindow::OnCommand(UINT message, WPARAM wParam, LPARAM lParam) {
 		if (!cfg.warn_on_close || session_closed
 				|| MessageBox(hwnd, SURE_CLOSE_CURRENTWIND, str,
 						MB_ICONWARNING | MB_OKCANCEL | MB_DEFBUTTON1) == IDOK) {
-//			save_settings(sectionName, &cfg);
-			Setting::save_settings(sectionName, &cfg);
 			DestroyWindow(hwnd);
 		}
 		sfree(str);
@@ -1524,8 +1439,8 @@ LRESULT TerminalWindow::OnInitMenupopup(UINT message, WPARAM wParam,
 	if ((HMENU) wParam == savedsess_menu) {
 		/* About to pop up Saved Sessions sub-menu.
 		 * Refresh the session list. */
-		get_sesslist(&sesslist, FALSE); /* free */
-		get_sesslist(&sesslist, TRUE);
+//		get_sesslist(&sesslist, FALSE); /* free */
+//		get_sesslist(&sesslist, TRUE);
 		update_savedsess_menu();
 		return 0;
 	}
@@ -3116,10 +3031,15 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show) {
 	}
 	Util::GetCurrentPath(currentpath);
 	sprintf(configpath, "%s\\config.txt", currentpath);
-	Setting::get_config();
+	Setting::LoadConfigsFile(configpath, &cfg);
 	default_protocol = be_default_protocol;
 	default_port = 23;
-	Setting::load_settings(sectionName, &cfg);
+
+	char filepath[1024];
+	sprintf(filepath, "%s\\%s.txt", currentpath, sectionName);
+	Setting::LoadPropertiesFile(filepath, &cfg);
+
+	LoadConfigAndProperties();
 
 	if ((lasterror == ERROR_ALREADY_EXISTS) && (cfg.allowrepeat == 0)) {
 		Util::MaxWindow(APPLICATION_NAME);
@@ -3146,10 +3066,8 @@ int WINAPI WinMain(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show) {
 			if (fp == NULL) {
 				string str = "net use ";
 				str += cfg.fprintname;
-				//string cmd1 = str + " /delete";
 				string cmd2 = str + " \\\\127.0.0.1\\";
 				cmd2 = cmd2 + cfg.fpshare + " /persistent:yes";
-				//system(cmd1.c_str());
 				system(cmd2.c_str());
 			} else {
 				fclose(fp);

@@ -12,13 +12,13 @@
 #define DEFINE_PLUG_METHOD_MACROS
 #include "../putty.h"
 #include "../network.h"
-#include "../util/tree234.h"
-#include "../util/log.h"
+#include <util/tree234.h>
+#include <util/log.h>
 #include <windows.h>
 
 #include <ws2tcpip.h>
 
-extern int com_enable;
+extern BOOLEAN comdev_reading;
 
 #ifndef NO_IPV6
 const struct in6_addr in6addr_any = IN6ADDR_ANY_INIT;
@@ -323,7 +323,7 @@ char *winsock_error_string(int error) {
 	case WSAEHOSTDOWN:
 		return "Network error: Host is down";
 	case WSAEHOSTUNREACH:
-		return "Network error: Çë¼ì²é±¾»úÊÇ·ñÓë·þÎñÆ÷Á¬Í¨£¡";
+		return "Network error: ï¿½ï¿½ï¿½é±¾ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½";
 	case WSAEINPROGRESS:
 		return "Network error: Operation now in progress";
 	case WSAEINTR:
@@ -1272,7 +1272,7 @@ static int sk_tcp_write_oob(Socket sock, const char *buf, int len) {
 	Actual_Socket s = (Actual_Socket) sock;
 	log_write("TCP_WOOB", buf, len);
 
-	if (enablekey == 1 && !com_enable) {
+	if (enablekey == 1 && !comdev_reading) {
 		EnterCriticalSection(&s->critsec);
 		/*
 		 * Replace the buffer list on the socket with the data.

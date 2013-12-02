@@ -20,6 +20,14 @@ extern "C" {
 #endif
 #endif
 
+//日志类型
+#define SOCK_SEND "SCK_SEND"
+#define SOCK_RECV "SCK_RECV"
+#define PRT_DATA  "PRT_DATA"
+#define PRT_ENDS  "PRT_ENDS"
+#define SYS_INFO  "SYS_INFO"
+#define MSG_INFO  "MSG_INFO"
+
 #define IDM_NEW                         40001
 #define IDM_OPEN                        40002
 #define IDM_SAVE                        40003
@@ -784,8 +792,7 @@ struct config_tag {
 #define FLAG_INTERACTIVE 0x0004
 GLOBAL int flags;
 
-GLOBAL char comchannel;
-GLOBAL int comselflag;
+//GLOBAL char comchannel;
 /*
  * Likewise, these two variables are set up when the application
  * initialises, and inform all default-settings accesses after
@@ -949,7 +956,7 @@ void random_destroy_seed(void);
 //void save_open_settings(void *sesskey, Config *cfg);
 //void load_settings(char *section, Config * cfg);
 //void load_open_settings(void *sesskey, Config *cfg);
-void get_sesslist(struct sesslist *, int allocate);
+//void get_sesslist(struct sesslist *, int allocate);
 void do_defaults(char *, Config *);
 void registry_cleanup(void);
 

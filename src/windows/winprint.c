@@ -5,10 +5,10 @@
 #include "../putty.h"
 #include <windows.h>
 #include <winspool.h>
-#include "../util/windows/print.h"
+#include <util/windows/print.h>
 #include "../windows/message.h"
 #include "../terminal.h"
-#include "../util/prtsvc.h"
+#include <util/prtsvc.h>
 
 struct printer_enum_tag {
 	int nprinters;

@@ -12,7 +12,7 @@
 #include <windows.h>
 #include <stdio.h>		       /* for FILENAME_MAX */
 
-#include "../util/TREE234.h"
+#include <util/TREE234.h>
 
 #include "winhelp.h"
 

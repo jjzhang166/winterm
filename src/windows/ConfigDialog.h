@@ -13,22 +13,24 @@
 #include <ctype.h>
 #include <time.h>
 
-#include "putty.h"
-#include "windows/win_res.h"
-#include "storage.h"
+#include "../putty.h"
+#include "win_res.h"
+#include "../storage.h"
 #include <commctrl.h>
 #include <commdlg.h>
 #include <shellapi.h>
-#include "resources/resource.h"
-#include "windows/message.h"
+#include "../resources/resource.h"
+#include "message.h"
 #include "windef.h"
 #include "winuser.h"
-#include "cpputils/Properties.h"
 
 namespace terminal {
 
+void LoadConfigAndProperties();
+
 class ConfigDialog {
 private:
+
 public:
 	ConfigDialog();
 	virtual ~ConfigDialog();

@@ -5,9 +5,6 @@
  *      Author: zhangbo
  */
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
 #ifndef TERMINALWINDOW_H_
 #define TERMINALWINDOW_H_
 
@@ -76,6 +73,7 @@ private:
 
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam,
 			LPARAM lParam);
+	static char* GetRegistCode();
 	static bool RegistSuccess();
 	static bool Single(void * hMutex, LPCSTR name);
 	static void cfgtopalette(void);
@@ -88,7 +86,7 @@ private:
 			unsigned char *output);
 protected:
 	//xiahui
-	static void MonitorCom(char* titlename);
+	static void MonitorCom(char* title);
 	static LRESULT OnTimer(WPARAM wParam, LPARAM lParam);
 	static LRESULT OnCreate(WPARAM wParam, LPARAM lParam);
 	static LRESULT OnDestroy(WPARAM wParam, LPARAM lParam);
@@ -127,6 +125,7 @@ protected:
 	static LRESULT OnMouseWheel(UINT message, WPARAM wParam, LPARAM lParam);
 	static void GenerateMach(char * localRegistCod, int type);
 
+	static void set_cfgto_uchar();
 public:
 	TerminalWindow(HINSTANCE inst, HINSTANCE prev, LPSTR cmdline, int show);
 	virtual ~TerminalWindow();
@@ -137,6 +136,3 @@ public:
 } /* namespace term */
 #endif /* TERMINALWINDOW_H_ */
 
-//#ifdef __cplusplus
-//}
-//#endif
