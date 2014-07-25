@@ -547,16 +547,15 @@ LRESULT CALLBACK TerminalWindow::KeyMouseProc(int code, // hook code
 string GenerateMach(char * localRegistCod, int type) {
 	char Serialnum[256];
 	memset(Serialnum, 0x00, 256);
-	int rv = 0;
 	switch (type) {
 	case 1:
-		rv = getCpuSeleroNumber(Serialnum);
+		getCpuSeleroNumber(Serialnum);
 		break;
 	case 2:
-		rv = getHddSeleroNumber(Serialnum);
+		getHddSeleroNumber(Serialnum);
 		break;
 	case 3:
-		rv = Util::getMacAddress(Serialnum);
+		Util::getMacAddress(Serialnum);
 		break;
 	}
 	int hash = Util::RSHash(Serialnum);
@@ -592,8 +591,9 @@ char* TerminalWindow::GetRegistCode() {
 	memset(registerkey, 0x00, 1024);
 
 	//汇金
-	encrypt_3des("f<w$/_db", "slOx'4\\#", "*MiYzXQ#",
-			(unsigned char *) machcodetemp, (unsigned char *) registerkey);
+	encrypt_3des((const unsigned char *)"f<w$/_db", (const unsigned char *)"slOx'4\\#",
+			(const unsigned char *)"*MiYzXQ#",
+			(const unsigned char *) machcodetemp, 16, registerkey);
 
 	hash = Util::RSHash(registerkey);
 	sprintf(localRegistKey, "%06d", hash % 1000000);

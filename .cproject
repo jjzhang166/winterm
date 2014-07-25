@@ -12,7 +12,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}d" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.mingw.exe.debug.849135583" name="Debug" parent="cdt.managedbuild.config.gnu.mingw.exe.debug" prebuildStep="mkdir -p src;windres -Jrc -Ocoff -i ../src/resources/resources.rc -o src/resources.o">
+				<configuration artifactName="${ProjName}d" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="cdt.managedbuild.config.gnu.mingw.exe.debug.849135583" name="Debug" parent="cdt.managedbuild.config.gnu.mingw.exe.debug" prebuildStep="mkdir -p src;windres -Jrc -Ocoff -i ../src/resources/resources.rc -o src/resources.o">
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.debug.849135583." name="/" resourcePath="">
 						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.exe.debug.1473313356" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.exe.debug">
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.mingw.exe.debug.844190987" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.mingw.exe.debug"/>
@@ -41,6 +41,7 @@
 								<option id="gnu.c.compiler.mingw.exe.debug.option.debugging.level.668018052" name="Debug Level" superClass="gnu.c.compiler.mingw.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.1616539553" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_WINDOWS"/>
+									<listOptionValue builtIn="false" value="NO_IPV6"/>
 									<listOptionValue builtIn="false" value="NO_HTMLHELP"/>
 									<listOptionValue builtIn="false" value="NO_HTMLHELP"/>
 									<listOptionValue builtIn="false" value="WINVER=0x0500"/>
@@ -101,7 +102,7 @@
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release,org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser" id="cdt.managedbuild.config.gnu.mingw.exe.release.1503858859" name="Release" parent="cdt.managedbuild.config.gnu.mingw.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="mkdir -p src;windres -Jrc -Ocoff -i ../src/resources/resources.rc -o src/resources.o">
+				<configuration artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" errorParsers="org.eclipse.cdt.core.GCCErrorParser;org.eclipse.cdt.core.GASErrorParser;org.eclipse.cdt.core.GLDErrorParser" id="cdt.managedbuild.config.gnu.mingw.exe.release.1503858859" name="Release" parent="cdt.managedbuild.config.gnu.mingw.exe.release" postannouncebuildStep="" postbuildStep="" preannouncebuildStep="" prebuildStep="mkdir -p src;windres -Jrc -Ocoff -i ../src/resources/resources.rc -o src/resources.o">
 					<folderInfo id="cdt.managedbuild.config.gnu.mingw.exe.release.1503858859." name="/" resourcePath="">
 						<toolChain errorParsers="" id="cdt.managedbuild.toolchain.gnu.mingw.exe.release.667083362" name="MinGW GCC" superClass="cdt.managedbuild.toolchain.gnu.mingw.exe.release">
 							<targetPlatform binaryParser="org.eclipse.cdt.core.PE" id="cdt.managedbuild.target.gnu.platform.mingw.exe.release.85914290" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.mingw.exe.release"/>
@@ -128,6 +129,7 @@
 								<option id="gnu.c.compiler.mingw.exe.release.option.debugging.level.131599869" name="Debug Level" superClass="gnu.c.compiler.mingw.exe.release.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.2090695195" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="_WINDOWS"/>
+									<listOptionValue builtIn="false" value="NO_IPV6"/>
 									<listOptionValue builtIn="false" value="NO_HTMLHELP"/>
 									<listOptionValue builtIn="false" value="NO_HTMLHELP"/>
 									<listOptionValue builtIn="false" value="WINVER=0x0500"/>
@@ -196,8 +198,13 @@
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.managedbuilder.core.GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/winterm"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/winterm"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/winterm"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
