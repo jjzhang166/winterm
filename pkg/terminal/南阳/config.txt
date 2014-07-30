@@ -1,0 +1,12 @@
+AllowRepeat=0
+CurrentUser=0
+Exename=terminal.exe
+FilePrintName=LPT1
+Linkpath=
+PrintMode=3
+RegistCod=5871-8221-9460
+RegistKey=888614
+SysPass=
+SysUser=
+host=127.0.0.1
+port=8080

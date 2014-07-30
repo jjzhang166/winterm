@@ -1,0 +1,11 @@
+AllowRepeat=0
+CurrentUser=0
+Exename=terminal.exe
+FilePrintName=lpt3
+Linkpath=
+PrintMode=3
+SharePrinterName=share
+SysPass=
+SysUser=
+host=127.0.0.1
+port=8080

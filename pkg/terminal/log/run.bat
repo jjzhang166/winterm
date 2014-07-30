@@ -1,0 +1,2 @@
+logview *.log
+pause
