@@ -19,9 +19,7 @@ extern void *backhandle;
 #define TRUE 1
 #endif
 
-#define	IAC	255		       /* interpret as command: *///表示命令开始标记，即该字节后面的内容当作命令来解释#define	DONT	254		       /* you are not to use option *///表示的是协商选项，发送方想让对方禁止某个子选项#define	DO	253		       /* please, you use option *///表示的是协商选项，发送方想让对方激活某个子选项#define	WONT	252		       /* I won't use option *///表示的是协商选项，发送方想主动禁止某个子选项#define	WILL	251		       /* I will use option *///该命令表示的是协商选项,发送方想主动激活某个子选项#define	SB	250		       /* interpret as subnegotiation *///表示子选项开始#define	SE	240		       /* end sub negotiation *///子选项结束#define GA      249		       /* you may reverse the line *///表示继续进行#define EL      248		       /* erase the current line *///删除行#define EC      247		       /* erase the current character *///表示的是转义字符#define	AYT	246		       /* are you there *///表示对方是否还在运行#define	AO	245		       /* abort output--but let prog finish *///异常终止进程#define	IP	244		       /* interrupt process--permanently *///表示的是中断进程#define	BREAK	243		       /* break *///该命令表示的是中断#define DM      242		       /* data mark--for connect. cleaning *///该命令表示的是数据标记#define NOP     241		       /* nop *///表示空操作#define EOR     239		       /* end of record (transparent mode) *///表示的是记录标识符#define ABORT   238		       /* Abort process *///表示非正常终止当前进程#define SUSP    237		       /* Suspend process *///表示挂起当前进程#define xEOF    236		       /* End of file: EOF is already used... *///表示文件结束符//telnet 协议的子选项定义#define TELOPT_BINARY	0	       /* 8-bit data path */#define TELOPT_ECHO	1	       /* echo *///表示服务器是否回显#define	TELOPT_RCP	2	       /* prepare to reconnect */#define	TELOPT_SGA	3	       /* suppress go ahead *///抑制继续进行#define	TELOPT_NAMS	4	       /* approximate message size */#define	TELOPT_STATUS	5	       /* give status *///状态#define	TELOPT_TM	6	       /* timing mark *///定时标记#define	TELOPT_RCTE	7	       /* remote controlled transmission and echo */#define TELOPT_NAOL 	8	       /* negotiate about output line width */#define TELOPT_NAOP 	9	       /* negotiate about output page size */
-#define TELOPT_NAOCRD	10	       /* negotiate about CR disposition */
-#define TELOPT_NAOHTS	11	       /* negotiate about horizontal tabstops */
+#define	IAC	255		       /* interpret as command: *///表示命令开始标记，即该字节后面的内容当作命令来解释#define	DONT	254		       /* you are not to use option *///表示的是协商选项，发送方想让对方禁止某个子选项#define	DO	253		       /* please, you use option *///表示的是协商选项，发送方想让对方激活某个子选项#define	WONT	252		       /* I won't use option *///表示的是协商选项，发送方想主动禁止某个子选项#define	WILL	251		       /* I will use option *///该命令表示的是协商选项,发送方想主动激活某个子选项#define	SB	250		       /* interpret as subnegotiation *///表示子选项开始#define	SE	240		       /* end sub negotiation *///子选项结束#define GA      249		       /* you may reverse the line *///表示继续进行#define EL      248		       /* erase the current line *///删除行#define EC      247		       /* erase the current character *///表示的是转义字符#define	AYT	246		       /* are you there *///表示对方是否还在运行#define	AO	245		       /* abort output--but let prog finish *///异常终止进程#define	IP	244		       /* interrupt process--permanently *///表示的是中断进程#define	BREAK	243		       /* break *///该命令表示的是中断#define DM      242		       /* data mark--for connect. cleaning *///该命令表示的是数据标记#define NOP     241		       /* nop *///表示空操作#define EOR     239		       /* end of record (transparent mode) *///表示的是记录标识符#define ABORT   238		       /* Abort process *///表示非正常终止当前进程#define SUSP    237		       /* Suspend process *///表示挂起当前进程#define xEOF    236		       /* End of file: EOF is already used... *///表示文件结束符//telnet 协议的子选项定义#define TELOPT_BINARY	0	       /* 8-bit data path */#define TELOPT_ECHO	1	       /* echo *///表示服务器是否回显#define	TELOPT_RCP	2	       /* prepare to reconnect */#define	TELOPT_SGA	3	       /* suppress go ahead *///抑制继续进行#define	TELOPT_NAMS	4	       /* approximate message size */#define	TELOPT_STATUS	5	       /* give status *///状态#define	TELOPT_TM	6	       /* timing mark *///定时标记#define	TELOPT_RCTE	7	       /* remote controlled transmission and echo */#define TELOPT_NAOL 	8	       /* negotiate about output line width */#define TELOPT_NAOP 	9	       /* negotiate about output page size */#define TELOPT_NAOCRD	10	       /* negotiate about CR disposition */#define TELOPT_NAOHTS	11	       /* negotiate about horizontal tabstops */
 #define TELOPT_NAOHTD	12	       /* negotiate about horizontal tab disposition */
 #define TELOPT_NAOFFD	13	       /* negotiate about formfeed disposition */
 #define TELOPT_NAOVTS	14	       /* negotiate about vertical tab stops */
@@ -34,13 +32,9 @@ extern void *backhandle;
 #define	TELOPT_SUPDUP	21	       /* supdup protocol */
 #define	TELOPT_SUPDUPOUTPUT 22	       /* supdup output */
 #define	TELOPT_SNDLOC	23	       /* send location */
-#define	TELOPT_TTYPE	24	       /* terminal type *///终端类型#define	TELOPT_EOR	25	       /* end or record */#define	TELOPT_TUID	26	       /* TACACS user identification */#define	TELOPT_OUTMRK	27	       /* output marking */
-#define	TELOPT_TTYLOC	28	       /* terminal location number */
-#define	TELOPT_3270REGIME 29	       /* 3270 regime */
+#define	TELOPT_TTYPE	24	       /* terminal type *///终端类型#define	TELOPT_7DTYPE	125	       /* terminal type *///屏幕号#define	TELOPT_EOR	25	       /* end or record */#define	TELOPT_TUID	26	       /* TACACS user identification */#define	TELOPT_OUTMRK	27	       /* output marking */#define	TELOPT_TTYLOC	28	       /* terminal location number */#define	TELOPT_3270REGIME 29	       /* 3270 regime */
 #define	TELOPT_X3PAD	30	       /* X.3 PAD */
-#define	TELOPT_NAWS	31	       /* window size *///窗口大小#define	TELOPT_TSPEED	32	       /* terminal speed *///终端速率#define	TELOPT_LFLOW	33	       /* remote flow control *///选程流量控制#define TELOPT_LINEMODE	34	       /* Linemode option *///执行方式#define TELOPT_XDISPLOC	35	       /* X Display Location */#define TELOPT_OLD_ENVIRON 36	       /* Old - Environment variables *///环境变量#define	TELOPT_AUTHENTICATION 37       /* Authenticate */#define	TELOPT_ENCRYPT	38	       /* Encryption option */#define TELOPT_NEW_ENVIRON 39	       /* New - Environment variables */
-#define TELOPT_TN3270E	40	       /* TN3270 enhancements */
-#define TELOPT_XAUTH	41
+#define	TELOPT_NAWS	31	       /* window size *///窗口大小#define	TELOPT_TSPEED	32	       /* terminal speed *///终端速率#define	TELOPT_LFLOW	33	       /* remote flow control *///选程流量控制#define TELOPT_LINEMODE	34	       /* Linemode option *///执行方式#define TELOPT_XDISPLOC	35	       /* X Display Location */#define TELOPT_OLD_ENVIRON 36	       /* Old - Environment variables *///环境变量#define	TELOPT_AUTHENTICATION 37       /* Authenticate */#define	TELOPT_ENCRYPT	38	       /* Encryption option */#define TELOPT_NEW_ENVIRON 39	       /* New - Environment variables */#define TELOPT_TN3270E	40	       /* TN3270 enhancements */#define TELOPT_XAUTH	41
 #define TELOPT_CHARSET	42	       /* Character set */
 #define TELOPT_RSP	43	       /* Remote serial port */
 #define TELOPT_COM_PORT_OPTION 44      /* Com port control */
@@ -155,6 +149,7 @@ enum {
 	OPTINDEX_THEY_SGA,
 	OPTINDEX_WE_BIN,
 	OPTINDEX_THEY_BIN,
+	OPTINDEX_7DTYPE,
 	NUM_OPTS
 };
 
@@ -164,6 +159,8 @@ static const struct Opt o_tspeed = { WILL, WONT, DO, DONT, TELOPT_TSPEED,
 		OPTINDEX_TSPEED, REALLY_INACTIVE };
 static const struct Opt o_ttype = { WILL, WONT, DO, DONT, TELOPT_TTYPE,
 		OPTINDEX_TTYPE, REQUESTED };
+static const struct Opt o_7dtype = { WILL, WONT, DO, DONT, TELOPT_7DTYPE,
+		OPTINDEX_7DTYPE, REQUESTED };
 static const struct Opt o_oenv = { WILL, WONT, DO, DONT, TELOPT_OLD_ENVIRON,
 		OPTINDEX_OENV, INACTIVE };
 static const struct Opt o_nenv = { WILL, WONT, DO, DONT, TELOPT_NEW_ENVIRON,
@@ -181,7 +178,7 @@ static const struct Opt o_they_bin = { DO, DONT, WILL, WONT, TELOPT_BINARY,
 
 static const struct Opt * const opts[] = { &o_naws, &o_tspeed, &o_ttype,
 		&o_oenv, &o_nenv, &o_echo, &o_we_sga, &o_they_sga, &o_we_bin,
-		&o_they_bin, NULL };
+		&o_they_bin, &o_7dtype, NULL };
 
 typedef struct telnet_tag {
 	const struct plug_function_table *fn;
@@ -411,11 +408,6 @@ static void process_subneg(Telnet telnet) {
 								&& telnet->cfg.termtype[n] <= 'z' ?
 								telnet->cfg.termtype[n] + 'A' - 'a' :
 								telnet->cfg.termtype[n]);
-
-				//b[n + 4] = (telnet->cfg.termtype[n] >= 'a'//小写方式
-				//    && telnet->cfg.termtype[n] <=
-				//    'z' ? telnet->cfg.termtype[n] + 0 -
-				//    0 : telnet->cfg.termtype[n]);
 			}
 			b[n + 4] = IAC;
 			b[n + 5] = SE;
@@ -428,6 +420,31 @@ static void process_subneg(Telnet telnet) {
 		} else
 			logevent(telnet->frontend,
 					"server:\tSB TTYPE <something weird>\r\n");
+		break;
+	case TELOPT_7DTYPE:
+		if (telnet->sb_len == 1 && telnet->sb_buf[0] == TELQUAL_SEND) {
+			char *logbuf;
+			b[0] = IAC;
+			b[1] = SB;
+			b[2] = TELOPT_7DTYPE;
+			b[3] = TELQUAL_IS;
+			unsigned char chrs[] = { 0x43, 0x4A, 0x36, 0x38, 0x30, 0x30, 0x42,
+					0x2C, 0x61, 0x6E, 0x79, 0x2C };
+			memcpy(b + 4, chrs, 12);
+			for (n = 0; telnet->cfg.screennum[n]; n++) {
+				b[n + 4 + 12] = telnet->cfg.screennum[n];
+			}
+			b[n + 4 + 12] = IAC;
+			b[n + 5 + 12] = SE;
+			telnet->bufsize = sk_write(telnet->s, (char * )b, n + 6 + 12);
+			b[n + 4 + 12] = 0;
+			logevent(telnet->frontend, "server:\tSB 7DTYPE SEND");
+			logbuf = dupprintf("client:\tSB 7DTYPE IS %s", b + 4 + 12);
+			logevent(telnet->frontend, logbuf);
+			sfree(logbuf);
+		} else
+			logevent(telnet->frontend,
+					"server:\tSB 7DTYPE <something weird>\r\n");
 		break;
 	case TELOPT_OLD_ENVIRON:
 	case TELOPT_NEW_ENVIRON:
@@ -676,30 +693,30 @@ static int telnet_receive(Plug plug, int urgent, byte *data, int len) {
 	log_write(SOCK_RECV, data, len);
 
 	const unsigned char init11[] = { 0xff, 0xf1, 0x18, 0x00, 0x00, 0x00 };	//实达
-	const unsigned char init21[] = { 0xff, 0xfd, 0x18, 0xff, 0xfd, 0x7d };	//国光
-	const unsigned char init22[] = { 0xff, 0xfb, 0x18, 0xff, 0xfb, 0x7d };	//国光
-	const unsigned char init23[] = { 0xFF, 0xFA, 0x18, 0x01, 0xFF, 0xF0, 0xFF,
-			0xFA, 0x7D, 0x01, 0xFF, 0xF0 };				//国光
-	unsigned char init24[] = { 0xFF, 0xFA, 0x18, 0x00, 0x56, 0x54, 0x31,
-			0x30, 0x30, 0xFF, 0xF0, 0xFF, 0xFA, 0x7D, 0x00, 0x43, 0x4A,
-			0x36, 0x38, 0x30, 0x30, 0x42, 0x2C, 0x61, 0x6E, 0x79, 0x2C };
-	unsigned char init25[] = { 0xFF, 0xF0 };
+//	const unsigned char init21[] = { 0xff, 0xfd, 0x18, 0xff, 0xfd, 0x7d };	//国光
+//	const unsigned char init22[] = { 0xff, 0xfb, 0x18, 0xff, 0xfb, 0x7d };	//国光
+//	const unsigned char init23[] = { 0xFF, 0xFA, 0x18, 0x01, 0xFF, 0xF0, 0xFF,
+//			0xFA, 0x7D, 0x01, 0xFF, 0xF0 };				//国光
+//	unsigned char init24[] = { 0xFF, 0xFA, 0x18, 0x00, 0x56, 0x54, 0x31, 0x30,
+//			0x30, 0xFF, 0xF0, 0xFF, 0xFA, 0x7D, 0x00, 0x43, 0x4A, 0x36, 0x38,
+//			0x30, 0x30, 0x42, 0x2C, 0x61, 0x6E, 0x79, 0x2C };
+//	unsigned char init25[] = { 0xFF, 0xF0 };
 	if (len >= 4 && memcmp(data, init11, 4) == 0) {
 		char screennum[135];
 		sprintf(screennum, "\xFF\xF1%s", cfg.screennum);
 		sk_write(telnet->s, (char * )screennum, strlen(screennum));
 		return 0;
-	} else if (len >= 6 && memcmp(data, init21, 6) == 0) {
-		sk_write(telnet->s, (char * )init22, 6);
-		return 0;
-	} else if (len >= 12 && memcmp(data, init23, 12) == 0) {
-		unsigned char screennum[135];
-		int l = strlen(cfg.screennum);
-		memcpy(screennum, init24, 27);
-		memcpy(screennum+27, cfg.screennum, l);
-		memcpy(screennum+27+l, init25, 2);
-		sk_write(telnet->s, (char * )screennum, 29 + l);
-		return 0;
+//	} else if (len >= 6 && memcmp(data, init21, 6) == 0) {
+//		sk_write(telnet->s, (char * )init22, 6);
+//		return 0;
+//	} else if (len >= 12 && memcmp(data, init23, 12) == 0) {
+//		unsigned char screennum[135];
+//		int l = strlen(cfg.screennum);
+//		memcpy(screennum, init24, 27);
+//		memcpy(screennum + 27, cfg.screennum, l);
+//		memcpy(screennum + 27 + l, init25, 2);
+//		sk_write(telnet->s, (char * )screennum, 29 + l);
+//		return 0;
 	}
 
 //	if (cfg.enablescreennum) {
