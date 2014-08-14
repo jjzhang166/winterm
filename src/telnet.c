@@ -19,37 +19,7 @@ extern void *backhandle;
 #define TRUE 1
 #endif
 
-#define	IAC	255		       /* interpret as command: *///表示命令开始标记，即该字节后面的内容当作命令来解释
-#define	DONT	254		       /* you are not to use option *///表示的是协商选项，发送方想让对方禁止某个子选项
-#define	DO	253		       /* please, you use option *///表示的是协商选项，发送方想让对方激活某个子选项
-#define	WONT	252		       /* I won't use option *///表示的是协商选项，发送方想主动禁止某个子选项
-#define	WILL	251		       /* I will use option *///该命令表示的是协商选项,发送方想主动激活某个子选项
-#define	SB	250		       /* interpret as subnegotiation *///表示子选项开始
-#define	SE	240		       /* end sub negotiation *///子选项结束
-#define GA      249		       /* you may reverse the line *///表示继续进行
-#define EL      248		       /* erase the current line *///删除行
-#define EC      247		       /* erase the current character *///表示的是转义字符
-#define	AYT	246		       /* are you there *///表示对方是否还在运行
-#define	AO	245		       /* abort output--but let prog finish *///异常终止进程
-#define	IP	244		       /* interrupt process--permanently *///表示的是中断进程
-#define	BREAK	243		       /* break *///该命令表示的是中断
-#define DM      242		       /* data mark--for connect. cleaning *///该命令表示的是数据标记
-#define NOP     241		       /* nop *///表示空操作
-#define EOR     239		       /* end of record (transparent mode) *///表示的是记录标识符
-#define ABORT   238		       /* Abort process *///表示非正常终止当前进程
-#define SUSP    237		       /* Suspend process *///表示挂起当前进程
-#define xEOF    236		       /* End of file: EOF is already used... *///表示文件结束符
-//telnet 协议的子选项定义
-#define TELOPT_BINARY	0	       /* 8-bit data path */
-#define TELOPT_ECHO	1	       /* echo *///表示服务器是否回显
-#define	TELOPT_RCP	2	       /* prepare to reconnect */
-#define	TELOPT_SGA	3	       /* suppress go ahead *///抑制继续进行
-#define	TELOPT_NAMS	4	       /* approximate message size */
-#define	TELOPT_STATUS	5	       /* give status *///状态
-#define	TELOPT_TM	6	       /* timing mark *///定时标记
-#define	TELOPT_RCTE	7	       /* remote controlled transmission and echo */
-#define TELOPT_NAOL 	8	       /* negotiate about output line width */
-#define TELOPT_NAOP 	9	       /* negotiate about output page size */
+#define	IAC	255		       /* interpret as command: *///表示命令开始标记，即该字节后面的内容当作命令来解释#define	DONT	254		       /* you are not to use option *///表示的是协商选项，发送方想让对方禁止某个子选项#define	DO	253		       /* please, you use option *///表示的是协商选项，发送方想让对方激活某个子选项#define	WONT	252		       /* I won't use option *///表示的是协商选项，发送方想主动禁止某个子选项#define	WILL	251		       /* I will use option *///该命令表示的是协商选项,发送方想主动激活某个子选项#define	SB	250		       /* interpret as subnegotiation *///表示子选项开始#define	SE	240		       /* end sub negotiation *///子选项结束#define GA      249		       /* you may reverse the line *///表示继续进行#define EL      248		       /* erase the current line *///删除行#define EC      247		       /* erase the current character *///表示的是转义字符#define	AYT	246		       /* are you there *///表示对方是否还在运行#define	AO	245		       /* abort output--but let prog finish *///异常终止进程#define	IP	244		       /* interrupt process--permanently *///表示的是中断进程#define	BREAK	243		       /* break *///该命令表示的是中断#define DM      242		       /* data mark--for connect. cleaning *///该命令表示的是数据标记#define NOP     241		       /* nop *///表示空操作#define EOR     239		       /* end of record (transparent mode) *///表示的是记录标识符#define ABORT   238		       /* Abort process *///表示非正常终止当前进程#define SUSP    237		       /* Suspend process *///表示挂起当前进程#define xEOF    236		       /* End of file: EOF is already used... *///表示文件结束符//telnet 协议的子选项定义#define TELOPT_BINARY	0	       /* 8-bit data path */#define TELOPT_ECHO	1	       /* echo *///表示服务器是否回显#define	TELOPT_RCP	2	       /* prepare to reconnect */#define	TELOPT_SGA	3	       /* suppress go ahead *///抑制继续进行#define	TELOPT_NAMS	4	       /* approximate message size */#define	TELOPT_STATUS	5	       /* give status *///状态#define	TELOPT_TM	6	       /* timing mark *///定时标记#define	TELOPT_RCTE	7	       /* remote controlled transmission and echo */#define TELOPT_NAOL 	8	       /* negotiate about output line width */#define TELOPT_NAOP 	9	       /* negotiate about output page size */
 #define TELOPT_NAOCRD	10	       /* negotiate about CR disposition */
 #define TELOPT_NAOHTS	11	       /* negotiate about horizontal tabstops */
 #define TELOPT_NAOHTD	12	       /* negotiate about horizontal tab disposition */
@@ -64,22 +34,11 @@ extern void *backhandle;
 #define	TELOPT_SUPDUP	21	       /* supdup protocol */
 #define	TELOPT_SUPDUPOUTPUT 22	       /* supdup output */
 #define	TELOPT_SNDLOC	23	       /* send location */
-#define	TELOPT_TTYPE	24	       /* terminal type *///终端类型
-#define	TELOPT_EOR	25	       /* end or record */
-#define	TELOPT_TUID	26	       /* TACACS user identification */
-#define	TELOPT_OUTMRK	27	       /* output marking */
+#define	TELOPT_TTYPE	24	       /* terminal type *///终端类型#define	TELOPT_EOR	25	       /* end or record */#define	TELOPT_TUID	26	       /* TACACS user identification */#define	TELOPT_OUTMRK	27	       /* output marking */
 #define	TELOPT_TTYLOC	28	       /* terminal location number */
 #define	TELOPT_3270REGIME 29	       /* 3270 regime */
 #define	TELOPT_X3PAD	30	       /* X.3 PAD */
-#define	TELOPT_NAWS	31	       /* window size *///窗口大小
-#define	TELOPT_TSPEED	32	       /* terminal speed *///终端速率
-#define	TELOPT_LFLOW	33	       /* remote flow control *///选程流量控制
-#define TELOPT_LINEMODE	34	       /* Linemode option *///执行方式
-#define TELOPT_XDISPLOC	35	       /* X Display Location */
-#define TELOPT_OLD_ENVIRON 36	       /* Old - Environment variables *///环境变量
-#define	TELOPT_AUTHENTICATION 37       /* Authenticate */
-#define	TELOPT_ENCRYPT	38	       /* Encryption option */
-#define TELOPT_NEW_ENVIRON 39	       /* New - Environment variables */
+#define	TELOPT_NAWS	31	       /* window size *///窗口大小#define	TELOPT_TSPEED	32	       /* terminal speed *///终端速率#define	TELOPT_LFLOW	33	       /* remote flow control *///选程流量控制#define TELOPT_LINEMODE	34	       /* Linemode option *///执行方式#define TELOPT_XDISPLOC	35	       /* X Display Location */#define TELOPT_OLD_ENVIRON 36	       /* Old - Environment variables *///环境变量#define	TELOPT_AUTHENTICATION 37       /* Authenticate */#define	TELOPT_ENCRYPT	38	       /* Encryption option */#define TELOPT_NEW_ENVIRON 39	       /* New - Environment variables */
 #define TELOPT_TN3270E	40	       /* TN3270 enhancements */
 #define TELOPT_XAUTH	41
 #define TELOPT_CHARSET	42	       /* Character set */
@@ -292,7 +251,7 @@ static void send_opt(Telnet telnet, int cmd, int option) {
 	b[0] = IAC;
 	b[1] = cmd;
 	b[2] = option;
-	telnet->bufsize = sk_write(telnet->s, (char *)b, 3);
+	telnet->bufsize = sk_write(telnet->s, (char * )b, 3);
 	log_option(telnet, "client", cmd, option);
 }
 
@@ -430,7 +389,7 @@ static void process_subneg(Telnet telnet) {
 			n = 4 + strlen(telnet->cfg.termspeed);
 			b[n] = IAC;
 			b[n + 1] = SE;
-			telnet->bufsize = sk_write(telnet->s, (char *)b, n + 2);
+			telnet->bufsize = sk_write(telnet->s, (char * )b, n + 2);
 			logevent(telnet->frontend, "server:\tSB TSPEED SEND");
 			logbuf = dupprintf("client:\tSB TSPEED IS %s",
 					telnet->cfg.termspeed);
@@ -460,7 +419,7 @@ static void process_subneg(Telnet telnet) {
 			}
 			b[n + 4] = IAC;
 			b[n + 5] = SE;
-			telnet->bufsize = sk_write(telnet->s, (char *)b, n + 6);
+			telnet->bufsize = sk_write(telnet->s, (char * )b, n + 6);
 			b[n + 4] = 0;
 			logevent(telnet->frontend, "server:\tSB TTYPE SEND");
 			logbuf = dupprintf("client:\tSB TTYPE IS %s", b + 4);
@@ -539,7 +498,7 @@ static void process_subneg(Telnet telnet) {
 			}
 			b[n++] = IAC;
 			b[n++] = SE;
-			telnet->bufsize = sk_write(telnet->s, (char *)b, n);
+			telnet->bufsize = sk_write(telnet->s, (char * )b, n);
 			logbuf = dupprintf("client:\tSB %s IS %s%s%s%s",
 					telopt(telnet->sb_opt),
 					*telnet->cfg.username ? "USER=" : "", telnet->cfg.username,
@@ -669,7 +628,7 @@ void do_telnet_read(Telnet telnet, byte *buf, int len) {
 	if (outbuflen) {
 		c_write(telnet, outbuf, outbuflen);
 		{
-			autologinpass(outbuf,outbuflen);
+			autologinpass(outbuf, outbuflen);
 		}
 	}
 
@@ -716,11 +675,30 @@ static int telnet_receive(Plug plug, int urgent, byte *data, int len) {
 	//zhangbo
 	log_write(SOCK_RECV, data, len);
 
-	const unsigned char init1[] = { 0xFF, 0xF1, 0x18, 0x00, 0x00, 0x00 };
-	if (len >= 4 && memcmp(data, init1, 4) == 0) {
+	const unsigned char init11[] = { 0xff, 0xf1, 0x18, 0x00, 0x00, 0x00 };	//实达
+	const unsigned char init21[] = { 0xff, 0xfd, 0x18, 0xff, 0xfd, 0x7d };	//国光
+	const unsigned char init22[] = { 0xff, 0xfb, 0x18, 0xff, 0xfb, 0x7d };	//国光
+	const unsigned char init23[] = { 0xFF, 0xFA, 0x18, 0x01, 0xFF, 0xF0, 0xFF,
+			0xFA, 0x7D, 0x01, 0xFF, 0xF0 };				//国光
+	unsigned char init24[] = { 0xFF, 0xFA, 0x18, 0x00, 0x56, 0x54, 0x31,
+			0x30, 0x30, 0xFF, 0xF0, 0xFF, 0xFA, 0x7D, 0x00, 0x43, 0x4A,
+			0x36, 0x38, 0x30, 0x30, 0x42, 0x2C, 0x61, 0x6E, 0x79, 0x2C };
+	unsigned char init25[] = { 0xFF, 0xF0 };
+	if (len >= 4 && memcmp(data, init11, 4) == 0) {
 		char screennum[135];
 		sprintf(screennum, "\xFF\xF1%s", cfg.screennum);
-		sk_write(telnet->s, (char *)screennum, strlen(screennum));
+		sk_write(telnet->s, (char * )screennum, strlen(screennum));
+		return 0;
+	} else if (len >= 6 && memcmp(data, init21, 6) == 0) {
+		sk_write(telnet->s, (char * )init22, 6);
+		return 0;
+	} else if (len >= 12 && memcmp(data, init23, 12) == 0) {
+		unsigned char screennum[135];
+		int l = strlen(cfg.screennum);
+		memcpy(screennum, init24, 27);
+		memcpy(screennum+27, cfg.screennum, l);
+		memcpy(screennum+27+l, init25, 2);
+		sk_write(telnet->s, (char * )screennum, 29 + l);
 		return 0;
 	}
 
@@ -904,11 +882,11 @@ static int telnet_send(void *handle, char *buf, int len) {
 		while (p < end && iswritable(*p)) {
 			p++;
 		}
-		telnet->bufsize = sk_write(telnet->s, (char *)q, p - q);
+		telnet->bufsize = sk_write(telnet->s, (char * )q, p - q);
 
 		while (p < end && !iswritable(*p)) {
-			telnet->bufsize =
-					sk_write(telnet->s, (char *)(*p == IAC ? iac : cr), 2);
+			telnet->bufsize = sk_write(telnet->s,
+					(char *)(*p == IAC ? iac : cr), 2);
 			p++;
 		}
 	}
@@ -918,7 +896,7 @@ static int telnet_send(void *handle, char *buf, int len) {
 
 static int telnet_send_BIN(void *handle, byte *buf, int len) {
 	Telnet telnet = (Telnet) handle;
-	telnet->bufsize = sk_write(telnet->s,(const char *)buf, len);
+	telnet->bufsize = sk_write(telnet->s, (const char * )buf, len);
 	return telnet->bufsize;
 }
 
@@ -962,7 +940,7 @@ static void telnet_size(void *handle, int width, int height) {
 		b[n++] = IAC; /* duplicate any IAC byte occurs */
 	b[n++] = IAC;
 	b[n++] = SE;
-	telnet->bufsize = sk_write(telnet->s, (char *)b, n);
+	telnet->bufsize = sk_write(telnet->s, (char * )b, n);
 	logbuf = dupprintf("client:\tSB NAWS %d,%d", telnet->term_width,
 			telnet->term_height);
 	logevent(telnet->frontend, logbuf);
@@ -985,51 +963,51 @@ static void telnet_special(void *handle, Telnet_Special code) {
 	switch (code) {
 	case TS_AYT:
 		b[1] = AYT; //表示对方是否还在运行
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_BRK:
 		b[1] = BREAK;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_EC:
 		b[1] = EC;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_EL:
 		b[1] = EL;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_GA:
 		b[1] = GA;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_NOP:
 		b[1] = NOP;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_ABORT:
 		b[1] = ABORT;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_AO:
 		b[1] = AO;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_IP:
 		b[1] = IP;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_SUSP:
 		b[1] = SUSP; //挂起当前的进程
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_EOR:
 		b[1] = EOR; //记录结束符
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_EOF:
 		b[1] = xEOF;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		break;
 	case TS_EOL:
 		/* In BINARY mode, CR-LF becomes just CR -
@@ -1041,8 +1019,8 @@ static void telnet_special(void *handle, Telnet_Special code) {
 		break;
 	case TS_SYNCH:
 		b[1] = DM;
-		telnet->bufsize = sk_write(telnet->s, (char *)b, 1);
-		telnet->bufsize = sk_write_oob(telnet->s, (char *)(b + 1), 1);
+		telnet->bufsize = sk_write(telnet->s, (char * )b, 1);
+		telnet->bufsize = sk_write_oob(telnet->s, (char * )(b + 1), 1);
 		break;
 	case TS_RECHO:
 		if (telnet->opt_states[o_echo.index] == INACTIVE
@@ -1060,7 +1038,7 @@ static void telnet_special(void *handle, Telnet_Special code) {
 	case TS_PING:
 		if (telnet->opt_states[o_they_sga.index] == ACTIVE) {
 			b[1] = NOP;
-			telnet->bufsize = sk_write(telnet->s, (char *)b, 2);
+			telnet->bufsize = sk_write(telnet->s, (char * )b, 2);
 		}
 		break;
 	default:
@@ -1077,7 +1055,7 @@ static const struct telnet_special *telnet_get_specials(void *handle) {
 					TS_AO }, { "Interrupt Process", TS_IP }, {
 					"Suspend Process", TS_SUSP }, { NULL, TS_SEP }, {
 					"End Of Record", TS_EOR }, { "End Of File", TS_EOF }, {
-					NULL, TS_EXITMENU } };
+			NULL, TS_EXITMENU } };
 	return specials;
 }
 
