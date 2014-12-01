@@ -36,9 +36,9 @@
 #include <util/comdev.h>
 
 //#define ZHANGBO_DEBUG
+//#define DEBUG_MAIN
 
-#ifdef ZHANGBO_DEBUG
-#define DEBUG_MAIN
+#ifdef DEBUG_BY_LOGS
 #define DEBUG_CAN_INPUT
 #endif
 
@@ -522,7 +522,7 @@ void TerminalWindow::update_mouse_pointer(void) {
 	}
 }
 
-LRESULT CALLBACK TerminalWindow::KeyBoardProc(int code, // hook code
+LRESULT CALLBACK TerminalWindow::KeyBoardProc(int nCode, // hook code
 		WPARAM wParam, // virtual-key code
 		LPARAM lParam // keystroke-message information
 		) {
@@ -530,7 +530,9 @@ LRESULT CALLBACK TerminalWindow::KeyBoardProc(int code, // hook code
 		term_print_screen (term);
 		return 1;
 	}
-	return 0;
+
+	return CallNextHookEx(g_hKeyBoard, nCode, wParam,
+	        lParam);
 }
 
 //鼠标钩子
@@ -1756,6 +1758,11 @@ LRESULT TerminalWindow::OnSysKeyUp(UINT message, WPARAM wParam, LPARAM lParam) {
 		unsigned char buf[20];
 		int len = 0;
 
+		if (wParam == VK_F12 || wParam == VK_F11 || wParam == VK_F10 ||
+			wParam == VK_F9 ||) {
+			return DefWindowProc(hwnd, message, wParam, lParam);
+		}
+
 		if (message == WM_SYSKEYUP && wParam == 13 && (lParam & (1 << 29))) {
 			flip_full_screen();
 			return 0;
@@ -1775,40 +1782,40 @@ LRESULT TerminalWindow::OnSysKeyUp(UINT message, WPARAM wParam, LPARAM lParam) {
 		} else {
 			memset(buf, 0x00, 20);
 
-			static char strBuf[32];
-			static int strLen;
-			static boolean isPressDh;
-
-			if (wParam == VK_F12) {
-				isPressDh = !isPressDh;
-				if (!isPressDh) { //esc
-					memset(strBuf, 0x00, 32);
-					strLen = 0;
-					isPressDh = 0;
-				}
-				return 0;
-			}
-
-			if (isPressDh == 1) {
-				if (wParam >= '0' && wParam <= '9') {
-					strBuf[strLen++] = wParam;
-					if (strLen == 4) {
-						int weiNum = atoi(strBuf + 2);
-						strBuf[2] = 0;
-						int quNum = atoi(strBuf);
-						sprintf(strBuf, "%c%c", quNum + 160, weiNum + 160);
-
-						if (ldisc) {
-							lpage_send(ldisc, kbd_codepage, strBuf, 2, 1);
-						}
-						show_mouseptr(0);
-						net_pending_errors();
-						memset(strBuf, 0x00, 32);
-						strLen = 0;
-					}
-				}
-				return 0;
-			}
+			// 区位输入
+//			static char strBuf[32];
+//			static int strLen;
+//			static boolean isPressDh = 0;
+//			if (wParam == VK_F12) {
+//				isPressDh = !isPressDh;
+//				if (!isPressDh) { //esc
+//					memset(strBuf, 0x00, 32);
+//					strLen = 0;
+//					isPressDh = 0;
+//				}
+//				return 0;
+//			}
+//
+//			if (isPressDh == 1) {
+//				if (wParam >= '0' && wParam <= '9') {
+//					strBuf[strLen++] = wParam;
+//					if (strLen == 4) {
+//						int weiNum = atoi(strBuf + 2);
+//						strBuf[2] = 0;
+//						int quNum = atoi(strBuf);
+//						sprintf(strBuf, "%c%c", quNum + 160, weiNum + 160);
+//
+//						if (ldisc) {
+//							lpage_send(ldisc, kbd_codepage, strBuf, 2, 1);
+//						}
+//						show_mouseptr(0);
+//						net_pending_errors();
+//						memset(strBuf, 0x00, 32);
+//						strLen = 0;
+//					}
+//				}
+//				return 0;
+//			}
 
 			if (cfg.allowshortcuts == 1) {
 				if (wParam >= VK_F1 && wParam <= VK_F12) {

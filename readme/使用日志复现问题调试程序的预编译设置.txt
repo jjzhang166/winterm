@@ -1,0 +1,30 @@
+
+在TerminalWindow::WndProc中：
+
+... ...
+
+//定义了通过日志调试
+#ifdef DEBUG_BY_LOGS
+#define DEBUG_CAN_INPUT
+#endif
+
+... ...
+
+	case WM_KEYDOWN:
+	case WM_SYSKEYUP:
+		if (debug || (enablekey == 1 && !comdev_reading)) {
+			ret = OnSysKeyUp(message, wParam, lParam);
+		} else {
+			ret = DefWindowProc(hwnd, message, wParam, lParam);
+		}
+		break;
+
+	case WM_IME_CHAR:
+		if (debug || (enablekey == 1 && !comdev_reading)) {
+			ret = OnImeChar(message, wParam, lParam);
+		} else {
+			ret = DefWindowProc(hwnd, message, wParam, lParam);
+		}
+		break;
+
+		
