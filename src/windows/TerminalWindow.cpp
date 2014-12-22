@@ -115,6 +115,7 @@ HINSTANCE TerminalWindow::prev;
 HBITMAP TerminalWindow::caretbm;
 //static HWND hwndNextViewer = NULL;
 int first;
+int cancle4 = 8;
 Properties *sesskey;
 int TerminalWindow::is_alt_pressed(void) {
 	BYTE keystate[256];
@@ -307,6 +308,7 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		ret = OnSetFocus(message, wParam, lParam);
 		break;
 	case WM_KILLFOCUS:
+		cancle4 = 0;
 		ret = OnKillFocus(message, wParam, lParam);
 		break;
 	case WM_ENTERSIZEMOVE:
@@ -528,6 +530,15 @@ LRESULT CALLBACK TerminalWindow::KeyBoardProc(int nCode, // hook code
 		) {
 	if (wParam == VK_SNAPSHOT) {
 		term_print_screen (term);
+		return 1;
+	}
+
+	if (wParam == VK_F12) {
+		cancle4 = 0;
+	}
+
+	if (cancle4 < 8 && wParam == 0x25) {
+		cancle4++;
 		return 1;
 	}
 
@@ -1759,7 +1770,7 @@ LRESULT TerminalWindow::OnSysKeyUp(UINT message, WPARAM wParam, LPARAM lParam) {
 		int len = 0;
 
 		if (wParam == VK_F12 || wParam == VK_F11 || wParam == VK_F10 ||
-			wParam == VK_F9 ||) {
+			wParam == VK_F9) {
 			return DefWindowProc(hwnd, message, wParam, lParam);
 		}
 
@@ -2098,8 +2109,8 @@ int TerminalWindow::TranslateKey(UINT message, WPARAM wParam, LPARAM lParam,
 	if (!r)
 		memset(keystate, 0, sizeof(keystate));
 	else {
-#if 0
 #define SHOW_TOASCII_RESULT
+#ifdef SHOW_TOASCII_RESULT
 		{ /* Tell us all about key events */
 			static BYTE oldstate[256];
 			static int first = 1;
