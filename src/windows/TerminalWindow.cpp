@@ -1759,7 +1759,7 @@ LRESULT TerminalWindow::OnSysKeyUp(UINT message, WPARAM wParam, LPARAM lParam) {
 		int len = 0;
 
 		if (wParam == VK_F12 || wParam == VK_F11 || wParam == VK_F10 ||
-			wParam == VK_F9 ||) {
+			wParam == VK_F9) {
 			return DefWindowProc(hwnd, message, wParam, lParam);
 		}
 
