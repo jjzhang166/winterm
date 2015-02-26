@@ -11,7 +11,7 @@
 #define REGISTKEY "注册码"
 #define SCREENNUM "屏幕号"
 
-#define APPLICATION_NAME "山东汇金信息科技有限公司 仿真终端  V4.1.1.0"
+#define APPLICATION_NAME "山东汇金信息科技有限公司 仿真终端  V4.1.2.0"
 #define TITLE_POINT "提示"
 #define FONT_NAME "新宋体"
 #define RET_NAME "仿宋_GB2312"

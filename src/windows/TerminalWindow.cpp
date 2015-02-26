@@ -240,9 +240,9 @@ LRESULT CALLBACK TerminalWindow::WndProc(HWND hWnd, UINT message, WPARAM wParam,
 		LPARAM lParam) {
 
 #ifdef DEBUG_CAN_INPUT
-	int debug = 1; //=1时允许键盘输入，用于调试，正式版=0
+	int debug = 1; //=1时允许键盘输入，用于根据日志调试，发布版本=0
 #else
-	int debug = 0; //=1时允许键盘输入，用于调试，正式版=0
+	int debug = 0; //=1时允许键盘输入，用于根据日志调试，发布版本=0
 #endif
 	LRESULT ret = 0;
 	::hwnd = hWnd;
@@ -1769,8 +1769,7 @@ LRESULT TerminalWindow::OnSysKeyUp(UINT message, WPARAM wParam, LPARAM lParam) {
 		unsigned char buf[20];
 		int len = 0;
 
-		if (wParam == VK_F12 || wParam == VK_F11 || wParam == VK_F10 ||
-			wParam == VK_F9) {
+		if (wParam == VK_F12) {
 			return DefWindowProc(hwnd, message, wParam, lParam);
 		}
 
