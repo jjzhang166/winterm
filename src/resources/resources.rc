@@ -499,12 +499,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "山东汇金仿真终端"
-            VALUE "FileVersion", "4, 1, 0, 0"
+            VALUE "FileVersion", "4, 1, 2, 0"
             VALUE "InternalName", "resources"
             VALUE "LegalCopyright", "版权所有 (C) 2012"
             VALUE "OriginalFilename", "terminal.exe"
             VALUE "ProductName", "山东汇金仿真终端"
-            VALUE "ProductVersion", "4, 1, 0, 0"
+            VALUE "ProductVersion", "4, 1, 2, 0"
         END
     END
     BLOCK "VarFileInfo"
